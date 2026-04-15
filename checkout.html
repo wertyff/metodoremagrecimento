@@ -6,10 +6,10 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
-    <title>Checkout Seguro | Metodo Seca Rapido 14D</title>
+    <title>Checkout Seguro | Metodo Derreter Gordura</title>
     <meta
       name="description"
-      content="Checkout transparente do Metodo Seca Rapido 14D com pagamento dentro da pagina."
+      content="Checkout transparente do Metodo Derreter Gordura com pagamento dentro da pagina."
     />
     <meta name="theme-color" content="#111111" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -26,41 +26,53 @@
       };
     </script>
   </head>
-  <body class="funnel-body">
+  <body class="funnel-body checkout-page">
     <div class="topline">
-      Pagamento dentro da pagina. Dados protegidos. Acesso liberado apos aprovacao.
+      Checkout seguro dentro da pagina. Acesso liberado automaticamente apos a aprovacao.
     </div>
 
     <main class="funnel-main">
       <div class="container">
         <div class="progress">
-          <span class="active">1. Checkout</span>
-          <span>2. Oferta Especial</span>
-          <span>3. Acesso Liberado</span>
+          <span class="active">1. Seus dados</span>
+          <span>2. Pagamento seguro</span>
+          <span>3. Acesso imediato</span>
         </div>
 
         <div class="funnel-grid checkout-layout">
-          <section class="hero-panel">
-            <div class="eyebrow" data-offer-eyebrow>Checkout principal</div>
-            <h1 data-offer-title>Voce esta a um passo de liberar o seu acesso.</h1>
-            <p class="lead" data-offer-lead>
-              Preencha seus dados, escolha se quer incluir o complemento opcional e
-              finalize sem sair do site.
-            </p>
+          <section class="hero-panel checkout-story">
+            <div class="checkout-story-copy">
+              <div class="eyebrow" data-offer-eyebrow>Ultimo passo</div>
+              <h1 data-offer-title>Finalize sua compra e comece hoje mesmo.</h1>
+              <p class="lead" data-offer-lead>
+                Complete seu pedido em menos de 2 minutos para liberar o Metodo Derreter
+                Gordura com plano pratico, checklist diario e bonus no mesmo acesso.
+              </p>
+            </div>
 
-            <div class="price-card">
-              <div class="old-price" data-offer-old-price>De R$ 97,00</div>
+            <div class="checkout-highlight">
+              <div class="price-card-top">
+                <div class="old-price" data-offer-old-price>De R$ 97,00</div>
+                <span class="price-card-note">Oferta ativa nesta pagina</span>
+              </div>
               <div class="price-main">
                 <strong data-offer-price>R$ 19,90</strong>
                 <span data-offer-price-note>pagamento unico</span>
               </div>
               <p data-offer-description>
-                Metodo digital com acesso online e leitura imediata no celular.
+                Metodo digital com acesso online, leitura facil no celular e entrega
+                imediata apos a confirmacao.
               </p>
+              <div class="checkout-glance" aria-label="Destaques da compra">
+                <span class="glance-chip">Acesso imediato apos aprovacao</span>
+                <span class="glance-chip">Pagamento 100% no site</span>
+                <span class="glance-chip">Garantia de 7 dias</span>
+              </div>
             </div>
 
-            <div class="summary-box">
-              <h3>O que voce recebe agora</h3>
+            <div class="summary-box checkout-includes">
+              <div class="section-kicker">Seu acesso inclui</div>
+              <h3>O que voce libera hoje no Metodo Derreter Gordura</h3>
               <div class="summary-list" data-offer-items></div>
             </div>
 
@@ -72,215 +84,219 @@
               </p>
             </div>
 
-            <div class="mini-proof">
-              <div class="mini-card">
-                <strong>Sem redirecionamento</strong>
-                <p>O cliente paga aqui mesmo, sem sair da pagina.</p>
+            <div class="checkout-confidence-grid">
+              <div class="mini-card confidence-card">
+                <strong>Compra sem complicacao</strong>
+                <p>Voce preenche os dados uma vez, paga dentro da pagina e acompanha tudo no mesmo fluxo.</p>
               </div>
-              <div class="mini-card">
+              <div class="mini-card confidence-card">
                 <strong>Confirmacao automatica</strong>
-                <p>O webhook confirma o pagamento e libera o acesso automaticamente.</p>
+                <p>Assim que o pagamento aprova, o sistema atualiza seu pedido e libera o acesso automaticamente.</p>
               </div>
             </div>
           </section>
 
-          <aside class="checkout-box">
-            <span class="badge">Compra segura</span>
-            <h2>Finalize seu pedido</h2>
-            <p class="micro-note">
-              Campos simples e leitura facil para celular.
-            </p>
+          <aside class="checkout-box checkout-card">
+            <div class="checkout-card-top">
+              <div>
+                <span class="badge">Compra segura</span>
+                <h2>Finalize seu pedido</h2>
+              </div>
+              <div class="checkout-total-chip">
+                <span>Total agora</span>
+                <strong data-header-total>R$ 19,90</strong>
+              </div>
+            </div>
+
+            <div class="checkout-order-snapshot">
+              <div>
+                <span class="section-kicker">Resumo do pedido</span>
+                <strong data-order-line-title>Metodo Derreter Gordura</strong>
+              </div>
+              <p class="micro-note">
+                Acesso digital liberado apos aprovacao, com pagamento processado pelo Mercado Pago
+                e leitura imediata no celular.
+              </p>
+            </div>
+
+            <div class="checkout-mini-stack">
+              <div class="mini-stack-item">
+                <strong>Inclui agora</strong>
+                <span>Guia principal, plano de 7 dias, checklist e bonus</span>
+              </div>
+              <div class="mini-stack-item">
+                <strong>Analise de pagamento</strong>
+                <span>Processamento imediato dentro da propria pagina</span>
+              </div>
+            </div>
 
             <div class="feedback hidden" data-checkout-feedback></div>
 
             <form id="mp-checkout-form" novalidate>
-              <div class="field-grid">
-                <div class="field">
-                  <label for="name">Nome completo</label>
-                  <input id="name" name="name" placeholder="Seu nome completo" />
+              <div class="payment-method-box">
+                <div class="section-headline compact">
+                  <div>
+                    <span class="section-kicker">Forma de pagamento</span>
+                    <h3>Escolha como quer pagar</h3>
+                  </div>
                 </div>
+
+                <div class="payment-method-switch" role="tablist" aria-label="Forma de pagamento">
+                  <button
+                    class="payment-method-button active"
+                    data-method-button
+                    data-method-option="pix"
+                    type="button"
+                  >
+                    <span class="payment-method-emoji">⚡</span>
+                    <span>
+                      <strong>Pix</strong>
+                      <small>Mais rapido</small>
+                    </span>
+                  </button>
+                  <button
+                    class="payment-method-button"
+                    data-method-button
+                    data-method-option="card"
+                    type="button"
+                  >
+                    <span class="payment-method-emoji">💳</span>
+                    <span>
+                      <strong>Cartao</strong>
+                      <small>Pague na hora</small>
+                    </span>
+                  </button>
+                </div>
+
+                <p class="payment-method-caption" data-method-caption>
+                  Gere o Pix em segundos e pague com QR Code ou copia e cola.
+                </p>
+              </div>
+
+              <div class="form-section">
+                <div class="section-headline">
+                  <div>
+                    <span class="section-kicker">Etapa 1</span>
+                    <h3>Seus dados</h3>
+                  </div>
+                  <span class="section-helper">Leva menos de 1 minuto</span>
+                </div>
+
+                <div class="field-grid">
+                  <div class="field">
+                    <label for="name">Nome completo</label>
+                    <input id="name" name="name" placeholder="Seu nome completo" />
+                  </div>
+                  <div class="field">
+                    <label for="email">E-mail</label>
+                    <input
+                      id="email"
+                      name="email"
+                      placeholder="voce@exemplo.com"
+                      type="email"
+                    />
+                  </div>
+                </div>
+
                 <div class="field">
-                  <label for="email">E-mail</label>
+                  <label for="cpf">CPF do titular</label>
                   <input
-                    id="email"
-                    name="email"
-                    placeholder="voce@exemplo.com"
-                    type="email"
+                    id="cpf"
+                    name="cpf"
+                    placeholder="000.000.000-00"
+                    inputmode="numeric"
                   />
                 </div>
               </div>
 
-              <div class="field">
-                <label for="cpf">CPF do titular</label>
-                <input
-                  id="cpf"
-                  name="cpf"
-                  placeholder="000.000.000-00"
-                  inputmode="numeric"
-                />
-              </div>
-
-              <div class="field">
-                <label for="cardholder-name">Nome como esta no cartao</label>
-                <input
-                  id="cardholder-name"
-                  name="cardholder_name"
-                  placeholder="Nome impresso no cartao"
-                />
-              </div>
-
-              <div class="field-grid two">
-                <div class="field">
-                  <label for="form-checkout__cardNumber">Numero do cartao</label>
-                  <div class="mp-field" id="form-checkout__cardNumber"></div>
-                </div>
-                <div class="field">
-                  <label for="form-checkout__expirationDate">Validade</label>
-                  <div class="mp-field" id="form-checkout__expirationDate"></div>
-                </div>
-              </div>
-
-              <div class="field-grid two">
-                <div class="field">
-                  <label for="form-checkout__securityCode">Codigo de seguranca</label>
-                  <div class="mp-field" id="form-checkout__securityCode"></div>
-                </div>
-                <div class="field">
-                  <label for="form-checkout__issuer">Banco emissor</label>
-                  <select id="form-checkout__issuer" name="issuer"></select>
-                </div>
-              </div>
-
-              <div class="field-grid two">
-                <div class="field">
-                  <label for="form-checkout__installments">Parcelas</label>
-                  <select id="form-checkout__installments" name="installments"></select>
-                </div>
-                <div class="field">
-                  <label for="form-checkout__identificationType">Documento</label>
-                  <select
-                    id="form-checkout__identificationType"
-                    name="identificationType"
-                  ></select>
-                </div>
-              </div>
-
-              <div class="bump-box" data-bump-box>
-                <div class="bump-head">
-                  <span class="bump-badge">Oferta opcional</span>
-                  <h3>Acelere seus resultados em casa</h3>
-                </div>
-
-                <div class="bump-check">
-                  <input data-bump-toggle id="bump" type="checkbox" />
-                  <label for="bump">
-                    <strong>
-                      SIM. Quero adicionar as Capsulas Termogenicas por so R$ 19,90
-                    </strong>
-                    <br />
-                    Receba um complemento fisico, simples de usar no dia a dia, sem
-                    atrapalhar o seu pedido principal.
-                  </label>
-                </div>
-
-                <div class="bump-copy">
-                  <p>Opcional. Envio para seu endereco. Desconto valido so nesta tela.</p>
-                  <p>De <s>R$ 39,90</s> por <strong>R$ 19,90</strong>.</p>
-                </div>
-
-                <div class="bump-shipping hidden" data-bump-shipping>
-                  <strong class="shipping-title">Dados para entrega</strong>
-
-                  <div class="field-grid">
-                    <div class="field">
-                      <label for="shipping-name">Nome completo</label>
-                      <input
-                        id="shipping-name"
-                        name="shipping_name"
-                        placeholder="Nome de quem recebe"
-                      />
-                    </div>
-                    <div class="field">
-                      <label for="shipping-cep">CEP</label>
-                      <input
-                        id="shipping-cep"
-                        name="shipping_cep"
-                        placeholder="00000-000"
-                        inputmode="numeric"
-                      />
-                    </div>
+              <div class="form-section hidden" data-card-fields>
+                <div class="section-headline">
+                  <div>
+                    <span class="section-kicker">Pagamento com cartao</span>
+                    <h3>Pagamento no cartao</h3>
                   </div>
+                  <span class="section-helper">Ambiente seguro</span>
+                </div>
 
-                  <div class="field-grid">
-                    <div class="field">
-                      <label for="shipping-address">Endereco</label>
-                      <input
-                        id="shipping-address"
-                        name="shipping_address"
-                        placeholder="Rua ou avenida"
-                      />
-                    </div>
+                <div class="checkout-protection-box">
+                  <strong>Dados sensiveis protegidos</strong>
+                  <p>
+                    Numero, validade e codigo de seguranca trafegam em campos blindados do
+                    Mercado Pago.
+                  </p>
+                </div>
+
+                <div class="field">
+                  <label for="cardholder-name">Nome como esta no cartao</label>
+                  <input
+                    id="cardholder-name"
+                    name="cardholder_name"
+                    placeholder="Nome impresso no cartao"
+                  />
+                </div>
+
+                <div class="field-grid two">
+                  <div class="field">
+                    <label for="form-checkout__cardNumber">Numero do cartao</label>
+                    <div class="mp-field" id="form-checkout__cardNumber"></div>
                   </div>
-
-                  <div class="field-grid three">
-                    <div class="field">
-                      <label for="shipping-number">Numero</label>
-                      <input
-                        id="shipping-number"
-                        name="shipping_number"
-                        placeholder="123"
-                      />
-                    </div>
-                    <div class="field">
-                      <label for="shipping-complement">Complemento</label>
-                      <input
-                        id="shipping-complement"
-                        name="shipping_complement"
-                        placeholder="Apto, casa, referencia"
-                      />
-                    </div>
-                    <div class="field">
-                      <label for="shipping-neighborhood">Bairro</label>
-                      <input
-                        id="shipping-neighborhood"
-                        name="shipping_neighborhood"
-                        placeholder="Seu bairro"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="field-grid two">
-                    <div class="field">
-                      <label for="shipping-city">Cidade</label>
-                      <input
-                        id="shipping-city"
-                        name="shipping_city"
-                        placeholder="Sua cidade"
-                      />
-                    </div>
-                    <div class="field">
-                      <label for="shipping-state">Estado</label>
-                      <input
-                        id="shipping-state"
-                        name="shipping_state"
-                        placeholder="UF"
-                        maxlength="2"
-                      />
-                    </div>
+                  <div class="field">
+                    <label for="form-checkout__expirationDate">Validade</label>
+                    <div class="mp-field" id="form-checkout__expirationDate"></div>
                   </div>
                 </div>
 
-                <small>Opcional. O metodo digital continua exatamente o mesmo.</small>
+                <div class="field-grid two">
+                  <div class="field">
+                    <label for="form-checkout__securityCode">Codigo de seguranca</label>
+                    <div class="mp-field" id="form-checkout__securityCode"></div>
+                  </div>
+                  <div class="field">
+                    <label for="form-checkout__issuer">Banco emissor</label>
+                    <select id="form-checkout__issuer" name="issuer"></select>
+                  </div>
+                </div>
+
+                <div class="field-grid two">
+                  <div class="field">
+                    <label for="form-checkout__installments">Parcelas</label>
+                    <select id="form-checkout__installments" name="installments"></select>
+                  </div>
+                  <div class="field">
+                    <label for="form-checkout__identificationType">Documento</label>
+                    <select
+                      id="form-checkout__identificationType"
+                      name="identificationType"
+                    ></select>
+                  </div>
+                </div>
+
+                <div class="payment-mini-pills">
+                  <span>Cartao dentro da pagina</span>
+                  <span>Parcelamento automatico</span>
+                  <span>Analise imediata</span>
+                </div>
               </div>
 
-              <div class="order-summary">
+              <div class="pix-preview-box" data-pix-preview>
+                <div class="pix-preview-copy">
+                  <strong>⚡ Pix rapido</strong>
+                  <p>Ao tocar no botao abaixo, vamos gerar seu QR Code e o codigo Pix copia e cola na mesma tela.</p>
+                </div>
+              </div>
+
+              <div class="order-summary checkout-summary">
+                <div class="order-row comparison">
+                  <span>Valor comparado</span>
+                  <strong data-order-compare>R$ 97,00</strong>
+                </div>
                 <div class="order-row">
-                  <span data-order-line-title>Metodo Seca Rapido 14D</span>
+                  <span data-order-line-title>Metodo Derreter Gordura</span>
                   <strong data-order-line-price>R$ 19,90</strong>
                 </div>
-                <div class="order-row" data-bump-line-row>
-                  <span>Capsulas Termogenicas</span>
-                  <strong data-bump-line>R$ 0,00</strong>
+                <div class="order-row savings">
+                  <span>Economia nesta compra</span>
+                  <strong data-order-savings>R$ 77,10</strong>
                 </div>
                 <div class="order-row total">
                   <span>Total agora</span>
@@ -289,13 +305,49 @@
               </div>
 
               <button class="btn btn-primary" data-submit-order type="submit">
-                PAGAR AGORA
+                <span data-submit-label>PAGAR AGORA</span>
+                <strong data-submit-total>R$ 19,90</strong>
               </button>
 
-              <p class="micro-note">
-                Ao tocar em pagar, o pedido e confirmado automaticamente quando o
-                pagamento for aprovado.
+              <div class="pix-result hidden" data-pix-result>
+                <div class="pix-result-head">
+                  <div>
+                    <span class="section-kicker">Pix gerado</span>
+                    <h3>Escaneie ou copie o codigo</h3>
+                  </div>
+                  <span class="section-helper" data-pix-status-label>Aguardando pagamento</span>
+                </div>
+
+                <div class="pix-qr-wrap">
+                  <img alt="QR Code Pix" class="pix-qr-image" data-pix-qr-image />
+                </div>
+
+                <div class="field">
+                  <label for="pix-code">Pix copia e cola</label>
+                  <textarea id="pix-code" data-pix-code readonly></textarea>
+                </div>
+
+                <div class="pix-result-actions">
+                  <button class="btn btn-ghost" data-copy-pix type="button">COPIAR CODIGO PIX</button>
+                  <a class="btn btn-dark" data-pix-status-link href="#">ACOMPANHAR STATUS</a>
+                </div>
+              </div>
+
+              <p class="order-summary-note">
+                Ao concluir, voce segue no mesmo fluxo e o sistema verifica automaticamente a
+                aprovacao para liberar seu acesso.
               </p>
+
+              <div class="checkout-reassurance">
+                <div class="reassurance-item">
+                  <strong>Compra protegida</strong>
+                  <span>Checkout transparente com o Mercado Pago</span>
+                </div>
+                <div class="reassurance-item">
+                  <strong>Liberacao automatica</strong>
+                  <span>O acesso aparece assim que o pagamento aprova</span>
+                </div>
+              </div>
             </form>
 
             <a class="btn btn-dark" href="index.html">Voltar para a pagina de vendas</a>

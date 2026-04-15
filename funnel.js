@@ -1,11 +1,20 @@
-const sessionKey = "msr14d-session";
-const upsellTimerKey = "msr14d-upsell-deadline";
+const sessionKey = "mdg7d-session";
+const upsellTimerKey = "mdg7d-upsell-deadline";
 
 function formatBRL(value) {
   return Number(value || 0).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL"
   });
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function getParams() {
@@ -298,6 +307,11 @@ async function setupAccess() {
                       <div class="delivery-module">
                         <strong>${module.title}</strong>
                         <p>${module.description}</p>
+                        ${
+                          module.fileUrl
+                            ? `<a class="download-link" href="${module.fileUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(module.fileLabel || "Abrir material")}</a>`
+                            : ""
+                        }
                         <ul class="delivery-points">
                           ${module.bullets.map((bullet) => `<li>${bullet}</li>`).join("")}
                         </ul>

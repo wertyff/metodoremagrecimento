@@ -6,23 +6,24 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
-    <title>Método Seca Rápido 14D | Versão Ultra Simples</title>
+    <title>Metodo Derreter Gordura | Sistema de 7 Dias</title>
     <meta
       name="description"
-      content="Um plano simples de 14 dias para quem quer emagrecer com mais controle, menos exagero e sem complicação."
+      content="Descubra o Metodo Derreter Gordura: um sistema pratico de 7 dias para perder medidas sem academia e sem dieta pesada."
     />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#fff8f5" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@700;900&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
     <script>
       window.LP_CONFIG = {
         checkoutUrl: "checkout.html",
-        tiktokPixelId: "SEU_PIXEL_AQUI"
+        tiktokPixelId: "SEU_PIXEL_AQUI",
+        vslEmbedUrl: ""
       };
       window.dataLayer = window.dataLayer || [];
       window.trackEvent = function trackEvent(name, params) {
@@ -33,270 +34,387 @@
       };
     </script>
   </head>
-  <body>
+  <body class="vsl-page">
     <div class="topbar">
-      <p>Compra segura | Acesso imediato | Garantia de 7 dias</p>
+      <span class="topbar-dot" aria-hidden="true"></span>
+      <span>Oferta liberada hoje com acesso imediato apos o pagamento</span>
+      <span class="topbar-dot" aria-hidden="true"></span>
     </div>
 
     <main>
-      <section class="hero" id="hero">
-        <div class="container hero-grid">
-          <div class="hero-copy">
-            <span class="eyebrow">Método simples para emagrecer</span>
-            <h1>
-              Um plano de 14 dias para quem quer emagrecer sem complicação.
-            </h1>
-            <p class="hero-sub">
-              O <strong>Método Seca Rápido 14D</strong> mostra, de forma simples,
-              o que fazer para reduzir exageros, organizar a rotina e voltar ao
-              controle.
-            </p>
+      <section class="hero section" id="hero">
+        <div class="container narrow">
+          <div class="hero-tag">Metodo exclusivo para quem quer simplicidade</div>
+          <h1>
+            Descubra o metodo simples que esta ajudando pessoas comuns a
+            <em>perder medidas em poucos dias</em> sem academia e sem dieta pesada
+          </h1>
+          <p class="hero-sub">
+            Um sistema pratico de 7 dias que ativa a queima de gordura usando apenas
+            <strong>10 minutos por dia</strong>.
+          </p>
 
-            <div class="hero-list">
-              <div>Passo a passo fácil</div>
-              <div>Sem academia obrigatória</div>
-              <div>Sem cardápio complicado</div>
-              <div>Acesso no celular</div>
-            </div>
-
-            <div class="hero-offer">
-              <div class="price-box">
-                <span class="old-price">De R$ 97,00</span>
-                <strong>Hoje por R$ 19,90</strong>
-                <small>Pagamento único + garantia de 7 dias</small>
-              </div>
-              <a
-                class="btn btn-primary cta-button"
-                data-checkout-link
-                href="checkout.html"
-              >
-                COMPRAR AGORA
-              </a>
-              <p class="hero-note">Você recebe o acesso logo após o pagamento.</p>
-            </div>
-
-            <div class="trust-row">
-              <span>Produto digital</span>
-              <span>Compra segura</span>
-              <span>Garantia de 7 dias</span>
-            </div>
-          </div>
-
-          <div class="hero-side">
-            <div class="video-card">
-              <div class="video-top">
-                <strong>Vídeo de apresentação</strong>
-                <span>Espaço pronto para VSL</span>
-              </div>
-              <div class="video-stage">
-                <div class="play-button" aria-hidden="true"></div>
-                <div class="video-text">
-                  <p>Entenda em poucos minutos</p>
-                  <h2>Veja como funciona e o que você vai receber.</h2>
+          <div class="hero-vsl" id="vslWrap">
+            <div class="vsl-thumb" id="vslThumb">
+              <div class="vsl-sides" aria-hidden="true">
+                <div class="vsl-side before">
+                  <span class="vsl-side-label">Antes</span>
+                  <strong>Rotina travada</strong>
+                </div>
+                <div class="vsl-side after">
+                  <span class="vsl-side-label">Depois</span>
+                  <strong>Plano simples e pratico</strong>
                 </div>
               </div>
+
+              <button class="vsl-play" id="playBtn" type="button">
+                <span class="play-circle" aria-hidden="true"></span>
+                <span class="play-copy">
+                  Assista antes de sair desta pagina
+                  <small>Toque para abrir a VSL</small>
+                </span>
+              </button>
+
+              <div class="vsl-watchers">Pessoas assistindo agora: 3.847</div>
             </div>
 
-            <div class="summary-card">
-              <h3>O que você recebe</h3>
-              <ul>
-                <li>Guia principal de 14 dias</li>
-                <li>Checklist fácil de seguir</li>
-                <li>Lista de substituições simples</li>
-                <li>Guia para continuar depois</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section section-soft" id="como-funciona">
-        <div class="container">
-          <div class="section-head">
-            <span class="section-tag">Como funciona</span>
-            <h2>Você compra, recebe e começa</h2>
+            <iframe
+              class="vsl-frame hidden"
+              id="vslFrame"
+              title="Video de vendas"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              allowfullscreen
+            ></iframe>
           </div>
 
-          <div class="steps-grid">
-            <article class="step-card">
-              <strong>1. Compre com segurança</strong>
-              <p>O acesso é liberado logo depois do pagamento.</p>
-            </article>
-            <article class="step-card">
-              <strong>2. Siga o passo a passo</strong>
-              <p>O método mostra o que fazer de forma simples.</p>
-            </article>
-            <article class="step-card">
-              <strong>3. Continue com mais controle</strong>
-              <p>Fica mais fácil manter a rotina sem desistir.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="depoimentos">
-        <div class="container">
-          <div class="section-head">
-            <span class="section-tag">Depoimentos</span>
-            <h2>Comentários simples e diretos</h2>
-          </div>
-
-          <div class="testimonial-grid">
-            <article class="testimonial-card">
-              <strong>Maria, 44 anos</strong>
-              <p>“Gostei porque é fácil de entender e fácil de seguir.”</p>
-            </article>
-            <article class="testimonial-card">
-              <strong>Paulo, 51 anos</strong>
-              <p>“O melhor foi saber exatamente o que fazer.”</p>
-            </article>
-            <article class="testimonial-card">
-              <strong>Silvia, 38 anos</strong>
-              <p>“Não parece complicado. Isso me ajudou a continuar.”</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section section-soft" id="oferta">
-        <div class="container offer-grid">
-          <div>
-            <span class="section-tag">Oferta</span>
-            <h2>Hoje você leva o método completo por R$ 19,90</h2>
-            <p>
-              Você recebe o conteúdo principal, os bônus e o acesso imediato.
-            </p>
-
-            <div class="offer-list-card">
-              <div class="offer-row">
-                <span>Método Seca Rápido 14D</span>
-                <strong>Incluído</strong>
-              </div>
-              <div class="offer-row">
-                <span>Checklist diário</span>
-                <strong>Incluído</strong>
-              </div>
-              <div class="offer-row">
-                <span>Lista de substituições</span>
-                <strong>Incluído</strong>
-              </div>
-              <div class="offer-row">
-                <span>Guia para continuar</span>
-                <strong>Incluído</strong>
-              </div>
-            </div>
-          </div>
-
-          <aside class="offer-box">
-            <span class="offer-kicker">Oferta de hoje</span>
-            <div class="offer-price">
-              <small>De R$ 97,00</small>
-              <strong>R$ 19,90</strong>
-              <span>Pagamento único</span>
-            </div>
-
-            <div class="countdown-box" aria-live="polite">
-              <p>Esta condição fica disponível enquanto o contador estiver ativo.</p>
-              <div class="countdown">
-                <div><strong id="hours">01</strong><span>horas</span></div>
-                <div><strong id="minutes">29</strong><span>min</span></div>
-                <div><strong id="seconds">59</strong><span>seg</span></div>
-              </div>
-            </div>
-
-            <a
-              class="btn btn-primary cta-button"
-              data-checkout-link
-              href="checkout.html"
-            >
-              COMPRAR AGORA
+          <div class="hero-cta-area">
+            <a class="cta-btn" data-checkout-link href="checkout.html">
+              QUERO COMECAR AGORA
             </a>
-
-            <div class="safe-list">
-              <span>Compra segura</span>
-              <span>Acesso imediato</span>
-              <span>Garantia de 7 dias</span>
-            </div>
-          </aside>
-        </div>
-      </section>
-
-      <section class="section" id="garantia">
-        <div class="container guarantee-grid">
-          <div class="guarantee-badge">7 dias</div>
-          <div>
-            <span class="section-tag">Garantia</span>
-            <h2>Você compra com tranquilidade</h2>
-            <p>
-              Se o material não fizer sentido para você, pode pedir reembolso
-              dentro do prazo de 7 dias.
+            <p class="cta-subtext">
+              Acesso digital imediato. Funciona no celular. Garantia de 7 dias.
             </p>
           </div>
         </div>
       </section>
 
-      <section class="section section-soft" id="faq">
-        <div class="container">
-          <div class="section-head">
-            <span class="section-tag">Perguntas comuns</span>
-            <h2>Respostas rápidas</h2>
+      <section class="section script-section">
+        <div class="container narrow script-flow">
+          <div class="script-block fade-in">
+            <p>Eu sei exatamente o que voce esta sentindo agora.</p>
+            <p>
+              A roupa que aperta. O espelho que voce evita. A sensacao de que seu corpo
+              te traiu depois de tantas tentativas frustradas.
+            </p>
+            <blockquote>
+              "Fiz dieta, passei fome, tentei academia e nada funcionou de verdade."
+            </blockquote>
+            <p>
+              Se isso soa familiar, o que voce vai ver aqui muda o jeito como voce pensa
+              sobre emagrecer.
+            </p>
           </div>
+
+          <div class="script-block fade-in">
+            <p><strong>O problema nao e voce.</strong> Nunca foi.</p>
+            <p>
+              O problema e o metodo errado. Dieta restritiva, culpa, recaida e tudo
+              comeca de novo. Esse ciclo nao e fraqueza. E biologia.
+            </p>
+            <p>
+              Quando voce corta tudo de uma vez, seu corpo reage como se estivesse sob
+              ameaca. Em vez de liberar gordura, ele segura.
+            </p>
+          </div>
+
+          <div class="script-block fade-in">
+            <p>
+              A solucao nao e se matar na academia nem passar fome. A solucao e ativar o
+              metabolismo com pequenas mudancas que o seu corpo aceita.
+            </p>
+            <blockquote>
+              E isso que o Metodo Derreter Gordura faz em 7 dias.
+            </blockquote>
+            <p>
+              Voce recebe um plano simples, direto e pratico para seguir ainda hoje, com
+              linguagem clara e passos faceis de executar.
+            </p>
+          </div>
+
+          <div class="script-block fade-in">
+            <p>
+              Sao <strong>10 minutos por dia</strong>. Sem contar macro. Sem dieta
+              impossivel. Sem suplemento caro.
+            </p>
+            <p>
+              Voce abre o material, segue o checklist e entra em acao. Simples assim.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section benefits-band">
+        <div class="container narrow">
+          <h2>Por que funciona para qualquer pessoa</h2>
+          <div class="benefit-grid">
+            <div class="benefit-item fade-in">Sem academia</div>
+            <div class="benefit-item fade-in">Sem dieta restritiva</div>
+            <div class="benefit-item fade-in">10 minutos por dia</div>
+            <div class="benefit-item fade-in">Plano de 7 dias pronto</div>
+            <div class="benefit-item fade-in">Facil de seguir</div>
+            <div class="benefit-item fade-in">Pode comecar hoje</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section receive-section">
+        <div class="container narrow">
+          <div class="section-label">O que esta incluso</div>
+          <h2 class="section-title">Tudo que voce recebe no acesso</h2>
+          <p class="section-sub">
+            Voce nao compra um produto isolado. Voce recebe um sistema completo.
+          </p>
+
+          <div class="receive-grid">
+            <article class="receive-card fade-in">
+              <div class="card-icon main">01</div>
+              <div>
+                <h3>Guia digital completo</h3>
+                <p>
+                  O metodo inteiro explicado em linguagem simples, com 4 modulos praticos.
+                </p>
+              </div>
+            </article>
+
+            <article class="receive-card fade-in">
+              <div class="card-icon main">02</div>
+              <div>
+                <h3>Plano pratico de 7 dias</h3>
+                <p>Um roteiro diario pronto para voce seguir sem duvida nem improviso.</p>
+              </div>
+            </article>
+
+            <article class="receive-card fade-in">
+              <div class="card-icon main">03</div>
+              <div>
+                <h3>Checklist diario</h3>
+                <p>Marque cada passo do dia e mantenha o foco no que realmente importa.</p>
+              </div>
+            </article>
+
+            <article class="receive-card fade-in">
+              <div class="card-icon bonus">B1</div>
+              <div>
+                <span class="mini-badge">Bonus</span>
+                <h3>Lista de alimentos aliados</h3>
+                <p>Os alimentos que ajudam na saciedade e na organizacao da rotina.</p>
+              </div>
+            </article>
+
+            <article class="receive-card fade-in">
+              <div class="card-icon bonus">B2</div>
+              <div>
+                <span class="mini-badge">Bonus</span>
+                <h3>Cardapio basico de 3 dias</h3>
+                <p>Opcoes simples para quem quer praticidade e menos decisao no dia a dia.</p>
+              </div>
+            </article>
+
+            <article class="receive-card fade-in">
+              <div class="card-icon bonus">B3</div>
+              <div>
+                <span class="mini-badge">Bonus</span>
+                <h3>Rotina expressa matinal</h3>
+                <p>Uma rotina curta para ativar o corpo e entrar no dia em movimento.</p>
+              </div>
+            </article>
+
+            <article class="receive-card fade-in">
+              <div class="card-icon bonus">B4</div>
+              <div>
+                <span class="mini-badge">Bonus</span>
+                <h3>Protocolo Barriga Zero</h3>
+                <p>Sete dias de foco extra para reduzir inchaco e afinar a cintura.</p>
+              </div>
+            </article>
+
+            <article class="receive-card fade-in">
+              <div class="card-icon bonus">B5</div>
+              <div>
+                <span class="mini-badge">Bonus</span>
+                <h3>Guia de emergencia</h3>
+                <p>O que fazer quando bater vontade de desistir ou de sair da rotina.</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="mid-cta">
+            <a class="cta-btn" data-checkout-link href="checkout.html">
+              QUERO RECEBER TUDO ISSO
+            </a>
+            <p class="cta-subtext">Acesso liberado logo apos a confirmacao.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section testimonials-section">
+        <div class="container narrow">
+          <div class="section-label">Resultados reais</div>
+          <h2 class="section-title">O que estao dizendo sobre o metodo</h2>
+
+          <div class="testimonials-grid">
+            <article class="testimonial-card fade-in">
+              <div class="stars">5 estrelas</div>
+              <p>
+                "Comecei sem expectativa, mas em poucos dias ja me senti menos inchada e
+                mais no controle. O melhor e que nao parece castigo."
+              </p>
+              <strong>Juliana M.</strong>
+              <span>Sao Paulo, SP</span>
+            </article>
+
+            <article class="testimonial-card fade-in">
+              <div class="stars">5 estrelas</div>
+              <p>
+                "O checklist me manteve firme. A linguagem e muito facil e eu consegui
+                aplicar tudo na minha rotina real."
+              </p>
+              <strong>Camila R.</strong>
+              <span>Belo Horizonte, MG</span>
+            </article>
+
+            <article class="testimonial-card fade-in">
+              <div class="stars">5 estrelas</div>
+              <p>
+                "Foi a primeira vez que consegui seguir um plano sem me sentir presa a
+                dieta. Bem mais leve do que eu imaginava."
+              </p>
+              <strong>Fernanda L.</strong>
+              <span>Curitiba, PR</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section offer-section" id="oferta">
+        <div class="container narrow">
+          <div class="offer-box">
+            <div class="offer-tag">Oferta especial de hoje</div>
+            <h2 class="offer-title">
+              Acesso imediato ao Metodo Derreter Gordura com todos os bonus inclusos
+            </h2>
+
+            <div class="offer-includes">
+              <div class="offer-item">Guia digital completo</div>
+              <div class="offer-item">Plano pratico de 7 dias</div>
+              <div class="offer-item">Checklist diario</div>
+              <div class="offer-item">Lista de alimentos aliados</div>
+              <div class="offer-item">Cardapio basico de 3 dias</div>
+              <div class="offer-item">Rotina expressa matinal</div>
+              <div class="offer-item">Protocolo Barriga Zero</div>
+              <div class="offer-item">Guia de emergencia</div>
+            </div>
+
+            <div class="offer-price-area">
+              <div class="offer-from">De R$ 97,00</div>
+              <div class="offer-price">R$ 19,90</div>
+              <div class="offer-price-note">Pagamento unico com acesso digital</div>
+            </div>
+
+            <a class="offer-cta-btn" data-checkout-link href="checkout.html">
+              RECEBER ACESSO AGORA
+            </a>
+            <div class="offer-live">Acesso liberado imediatamente apos o pagamento</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section guarantee-section">
+        <div class="container narrow">
+          <div class="guarantee-box fade-in">
+            <div class="guarantee-icon">7 dias</div>
+            <h2>Garantia total para voce testar com tranquilidade</h2>
+            <p>
+              Experimente o metodo por 7 dias completos. Se nao fizer sentido para voce,
+              basta solicitar o reembolso dentro do prazo legal.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section faq-section">
+        <div class="container narrow">
+          <div class="section-label">Perguntas frequentes</div>
+          <h2 class="section-title">O que as pessoas mais perguntam antes de comprar</h2>
 
           <div class="faq-list">
             <article class="faq-item open">
-              <button class="faq-question" type="button">
-                Como eu recebo o acesso?
-              </button>
-              <div class="faq-answer">
-                <p>Logo depois da compra, o acesso é liberado no formato digital.</p>
-              </div>
-            </article>
-            <article class="faq-item">
-              <button class="faq-question" type="button">
+              <button class="faq-q" type="button">
                 Preciso fazer academia?
+                <span class="arrow" aria-hidden="true">+</span>
               </button>
-              <div class="faq-answer">
-                <p>Não. O método foi pensado para começar de forma simples.</p>
+              <div class="faq-a">
+                Nao. O metodo foi criado para caber na rotina de quem quer algo simples e
+                aplicavel em casa.
               </div>
             </article>
+
             <article class="faq-item">
-              <button class="faq-question" type="button">
-                É difícil de entender?
+              <button class="faq-q" type="button">
+                Preciso parar de comer tudo que gosto?
+                <span class="arrow" aria-hidden="true">+</span>
               </button>
-              <div class="faq-answer">
-                <p>Não. O material foi feito para ser fácil de ler e fácil de seguir.</p>
+              <div class="faq-a">
+                Nao. A proposta e reorganizar pequenos habitos, sem uma dieta pesada e sem
+                um plano impossivel de sustentar.
+              </div>
+            </article>
+
+            <article class="faq-item">
+              <button class="faq-q" type="button">
+                O acesso e imediato?
+                <span class="arrow" aria-hidden="true">+</span>
+              </button>
+              <div class="faq-a">
+                Sim. Assim que o pagamento for confirmado, o acesso ao material e liberado.
+              </div>
+            </article>
+
+            <article class="faq-item">
+              <button class="faq-q" type="button">
+                O produto e digital?
+                <span class="arrow" aria-hidden="true">+</span>
+              </button>
+              <div class="faq-a">
+                Sim. Voce acessa pelo celular, computador ou tablet, sem frete e sem espera.
               </div>
             </article>
           </div>
         </div>
       </section>
 
-      <section class="section final-cta" id="checkout">
+      <section class="section final-cta">
         <div class="container narrow">
-          <span class="section-tag">Último passo</span>
-          <h2>Se você quer começar, toque no botão abaixo.</h2>
-          <p>Compra simples. Acesso rápido. Garantia de 7 dias.</p>
-          <a
-            class="btn btn-primary cta-button"
-            data-checkout-link
-            href="checkout.html"
-          >
-            COMPRAR AGORA
+          <h2>Voce chegou ate aqui por um motivo. Agora e a hora de comecar.</h2>
+          <p>
+            Seu corpo, sua autoestima e sua rotina merecem uma mudanca mais leve e mais
+            inteligente.
+          </p>
+          <a class="final-btn" data-checkout-link href="checkout.html">
+            COMECAR MEU PLANO AGORA
           </a>
+          <div class="final-note">Acesso imediato. Garantia de 7 dias. Funciona no celular.</div>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <div class="container footer-grid">
-        <div>
-          <strong>Método Seca Rápido 14D</strong>
-          <p>Produto digital com acesso online.</p>
-        </div>
-        <div>
-          <strong>Aviso importante</strong>
-          <p>Este material não substitui orientação médica individual.</p>
-        </div>
+      <div class="container narrow">
+        <p>Metodo Derreter Gordura | Produto digital | Todos os direitos reservados</p>
+        <p>
+          Este produto e de natureza educacional. Os resultados variam conforme contexto,
+          aplicacao e constancia individual.
+        </p>
       </div>
     </footer>
 
@@ -305,13 +423,7 @@
         <strong>Hoje por R$ 19,90</strong>
         <span>Acesso imediato</span>
       </div>
-      <a
-        class="btn btn-primary cta-button"
-        data-checkout-link
-        href="checkout.html"
-      >
-        COMPRAR AGORA
-      </a>
+      <a class="btn-sticky" data-checkout-link href="checkout.html">QUERO COMECAR</a>
     </div>
 
     <script src="script.js"></script>

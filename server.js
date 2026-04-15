@@ -38,57 +38,59 @@ app.set("trust proxy", 1);
 
 const catalog = {
   main: {
-    code: "main_14d",
+    code: "main_derreter_gordura",
     kind: "main",
-    name: "Metodo Seca Rapido 14D",
-    description: "Metodo digital com passo a passo de 14 dias.",
+    name: "Metodo Derreter Gordura",
+    description: "Sistema de 7 dias que ativa a queima de gordura sem dieta pesada e sem academia.",
     price: 19.9,
     oldPrice: 97,
     type: "digital",
     delivery: {
-      title: "Metodo Seca Rapido 14D",
-      summary: "Seu plano principal de 14 dias ja esta liberado na area de acesso.",
+      title: "Metodo Derreter Gordura",
+      summary: "Seu guia principal ja esta liberado com plano pratico, checklist diario e bonus exclusivos.",
       modules: [
         {
-          title: "Mapa dos 14 dias",
-          description: "Veja como dividir sua rotina nas duas primeiras semanas sem exagero.",
+          title: "Guia digital completo",
+          description: "Abra o material principal com os 4 modulos, o plano de 7 dias e os bonus do Metodo Derreter Gordura.",
+          fileUrl: "/downloads/metodo-derreter-gordura/Metodo_Derreter_Gordura.pdf",
+          fileLabel: "Baixar guia completo",
           bullets: [
-            "Prioridades claras para cada etapa",
-            "Sequencia simples para comecar hoje",
-            "Ritmo pensado para celular e leitura rapida"
+            "Promessa simples e facil de aplicar no dia a dia",
+            "4 modulos para ativar metabolismo, ajustar alimentacao e manter foco",
+            "Material unico para consultar no celular ou no computador"
           ]
         },
         {
-          title: "Checklist diario",
-          description: "Use esta lista curta para acompanhar sua consistencia todos os dias.",
+          title: "Plano pratico + checklist",
+          description: "O material traz um plano de 7 dias e um checklist diario para acelerar a aplicacao.",
           bullets: [
-            "Passos objetivos para nao esquecer o essencial",
-            "Leitura rapida antes de dormir ou ao acordar",
-            "Ideal para manter foco sem complicacao"
+            "Acoes objetivas para comecar no mesmo dia",
+            "Rotina simples para manter constancia sem dieta pesada",
+            "Estrutura pensada para quem quer resultado com menos atrito"
           ]
         },
         {
-          title: "Guia de continuidade",
-          description: "Quando terminar os 14 dias, siga para a proxima etapa sem voltar ao zero.",
+          title: "Bonus estrategicos",
+          description: "Os bonus ajudam a transformar o guia em um plano mais vendavel e mais pratico para o cliente final.",
           bullets: [
-            "Como manter o ritmo depois do plano principal",
-            "Ajustes simples para a semana seguinte",
-            "Pontos de atencao para evitar recaidas"
+            "Lista de alimentos aliados e cardapio base",
+            "Rotina expressa matinal e protocolo barriga zero",
+            "Guia de emergencia para momentos de fraqueza"
           ]
         }
       ]
     }
   },
   bump: {
-    code: "capsulas_termogenicas",
+    code: "capsulas_seca_barriga",
     kind: "bump",
-    name: "Capsulas Termogenicas",
-    description: "Complemento fisico opcional para a rotina.",
+    name: "Capsulas Seca Barriga",
+    description: "Complemento fisico opcional para acompanhar a rotina do metodo.",
     price: 19.9,
     oldPrice: 39.9,
     type: "physical",
     delivery: {
-      title: "Capsulas Termogenicas",
+      title: "Capsulas Seca Barriga",
       summary: "Complemento fisico confirmado. A equipe vai separar e enviar para o endereco informado.",
       nextSteps: [
         "Separacao do item",
@@ -98,57 +100,57 @@ const catalog = {
     }
   },
   upsell: {
-    code: "upsell_30d",
+    code: "upsell_barriga_zero_30d",
     kind: "upsell",
-    name: "Acelerador Seca Rapido 30D",
-    description: "Plano complementar de continuidade por 30 dias.",
+    name: "Protocolo Barriga Zero 30D",
+    description: "Plano complementar de 30 dias para manter a queima ativa depois da primeira semana.",
     price: 27,
     oldPrice: 67,
     type: "digital",
     delivery: {
-      title: "Acelerador Seca Rapido 30D",
-      summary: "Conteudo complementar liberado para continuar depois do plano principal.",
+      title: "Protocolo Barriga Zero 30D",
+      summary: "Conteudo complementar liberado para quem quer manter a consistencia depois do guia principal.",
       modules: [
         {
-          title: "Plano de 30 dias",
-          description: "Extensao do metodo para manter regularidade por mais tempo.",
+          title: "Plano de continuidade",
+          description: "Extensao do metodo com foco em manter a barriga mais seca nas semanas seguintes.",
           bullets: [
-            "Rotina semanal para nao perder o embalo",
-            "Organizacao simples de segunda a domingo",
-            "Acompanhamento pensado para continuidade"
+            "Rotina semanal para continuar sem voltar ao zero",
+            "Ajustes simples para reduzir recaidas",
+            "Aplicacao leve, pensada para manter o ritmo"
           ]
         },
         {
-          title: "Checklist semanal",
-          description: "Resumo rapido da semana para revisar progresso e ajustar a rota.",
+          title: "Checklist de manutencao",
+          description: "Resumo pratico para revisar a semana e sustentar o foco.",
           bullets: [
-            "Pontes entre a fase de 14 dias e a fase de 30 dias",
-            "Revisao de constancia e foco",
-            "Passos simples para seguir sem travar"
+            "Acompanhamento das principais alavancas do metodo",
+            "Passos simples para seguir mesmo nos dias mais corridos",
+            "Mais clareza para transformar o resultado inicial em continuidade"
           ]
         }
       ]
     }
   },
   downsell: {
-    code: "downsell_21d",
+    code: "downsell_cardapio_21d",
     kind: "downsell",
-    name: "Versao Essencial 21D",
-    description: "Versao mais curta e acessivel para continuidade.",
+    name: "Cardapio Inteligente 21D",
+    description: "Versao mais enxuta para quem quer apoio alimentar simples com ticket menor.",
     price: 14.9,
     oldPrice: 37,
     type: "digital",
     delivery: {
-      title: "Versao Essencial 21D",
-      summary: "Versao enxuta liberada como continuidade mais leve do seu pedido principal.",
+      title: "Cardapio Inteligente 21D",
+      summary: "Material complementar liberado para quem prefere uma continuidade mais leve e objetiva.",
       modules: [
         {
-          title: "Plano essencial",
-          description: "Versao resumida para manter a rotina com um roteiro menor.",
+          title: "Roteiro alimentar objetivo",
+          description: "Plano resumido para facilitar as escolhas do dia a dia sem complicacao.",
           bullets: [
-            "Passo a passo mais direto",
-            "Carga menor para uma decisao mais simples",
-            "Continuacao objetiva do metodo principal"
+            "Cardapio mais simples para manter o foco",
+            "Decisao rapida para quem quer uma opcao acessivel",
+            "Complemento objetivo do Metodo Derreter Gordura"
           ]
         }
       ]
@@ -202,14 +204,11 @@ function formatNameParts(fullName) {
   };
 }
 
-function buildItems(kind, bumpSelected) {
+function buildItems(kind) {
   const items = [];
 
   if (kind === "main") {
     items.push({ ...catalog.main, quantity: 1 });
-    if (bumpSelected) {
-      items.push({ ...catalog.bump, quantity: 1 });
-    }
   }
 
   if (kind === "upsell") {
@@ -394,7 +393,6 @@ function splitPhone(rawPhone) {
 function buildPaymentPayload(order, paymentData) {
   const { firstName, lastName } = formatNameParts(order.customer.name);
   const phone = splitPhone(order.customer.phone);
-  const shipping = order.shipping || null;
 
   const additionalInfo = {
     items: order.items.map((item) => ({
@@ -412,28 +410,9 @@ function buildPaymentPayload(order, paymentData) {
     }
   };
 
-  if (shipping) {
-    additionalInfo.shipments = {
-      receiver_address: {
-        zip_code: onlyDigits(shipping.cep),
-        street_name: shipping.address,
-        street_number: shipping.number,
-        apartment: shipping.complement,
-        neighborhood_name: shipping.neighborhood,
-        city_name: shipping.city,
-        federal_unit: shipping.state
-      }
-    };
-  }
-
-  return {
+  const basePayload = {
     transaction_amount: Number(order.total.toFixed(2)),
-    token: paymentData.token,
     description: order.items.map((item) => item.name).join(" + "),
-    installments: Number(paymentData.installments || 1),
-    payment_method_id: paymentData.paymentMethodId,
-    issuer_id: paymentData.issuerId || undefined,
-    statement_descriptor: config.mercadoPago.statementDescriptor,
     external_reference: order.reference,
     notification_url: `${config.baseUrl}/api/webhooks/mercadopago`,
     payer: {
@@ -444,25 +423,31 @@ function buildPaymentPayload(order, paymentData) {
       identification: {
         type: paymentData.identificationType || "CPF",
         number: onlyDigits(paymentData.identificationNumber)
-      },
-      address: shipping
-        ? {
-            zip_code: onlyDigits(shipping.cep),
-            street_name: shipping.address,
-            street_number: shipping.number,
-            neighborhood: shipping.neighborhood,
-            city: shipping.city,
-            federal_unit: shipping.state
-          }
-        : undefined
+      }
     },
     additional_info: additionalInfo,
     metadata: {
       order_reference: order.reference,
       order_kind: order.kind,
       parent_reference: order.parentReference || "",
-      bump_selected: String(Boolean(order.bumpSelected))
+      bump_selected: "false"
     }
+  };
+
+  if (paymentData.method === "pix") {
+    return {
+      ...basePayload,
+      payment_method_id: "pix"
+    };
+  }
+
+  return {
+    ...basePayload,
+    token: paymentData.token,
+    installments: Number(paymentData.installments || 1),
+    payment_method_id: paymentData.paymentMethodId,
+    issuer_id: paymentData.issuerId || undefined,
+    statement_descriptor: config.mercadoPago.statementDescriptor
   };
 }
 
@@ -482,6 +467,17 @@ async function fetchMercadoPagoPayment(paymentId) {
   return mercadoPagoRequest(`/v1/payments/${paymentId}`, {
     method: "GET"
   });
+}
+
+function extractPixData(payment) {
+  const transactionData = payment?.point_of_interaction?.transaction_data || {};
+
+  return {
+    qrCode: transactionData.qr_code || "",
+    qrCodeBase64: transactionData.qr_code_base64 || "",
+    ticketUrl: transactionData.ticket_url || "",
+    expiresAt: payment?.date_of_expiration || null
+  };
 }
 
 function parseSignatureHeader(value) {
@@ -570,6 +566,32 @@ function buildDigitalAccess(bundle) {
     );
 }
 
+function normalizeDownloadPath(rawPath) {
+  const normalized = path.posix.normalize(`/${String(rawPath || "").replace(/\\/g, "/")}`);
+  if (!normalized.startsWith("/downloads/")) {
+    return "";
+  }
+  if (normalized.includes("..")) {
+    return "";
+  }
+  return normalized;
+}
+
+function getAuthorizedDownloadPaths(bundle) {
+  const paths = new Set();
+
+  buildDigitalAccess(bundle).forEach((content) => {
+    (content.modules || []).forEach((module) => {
+      const fileUrl = normalizeDownloadPath(module.fileUrl);
+      if (fileUrl) {
+        paths.add(fileUrl);
+      }
+    });
+  });
+
+  return paths;
+}
+
 function buildPhysicalShipments(bundle) {
   return bundle.approvedOrders.flatMap((order) => {
     const physicalItems = order.items.filter((item) => item.type === "physical");
@@ -619,10 +641,9 @@ app.post("/api/payments", async (req, res) => {
       ? req.body.offerKind
       : "main";
     const parentReference = String(req.body.parentReference || "").trim() || null;
-    const bumpSelected = offerKind === "main" && Boolean(req.body.bumpSelected);
     const customer = req.body.customer || {};
     const payment = req.body.payment || {};
-    const shipping = req.body.shipping || null;
+    const paymentMethod = payment.method === "pix" ? "pix" : "card";
     const customerEmail = String(customer.email || "").trim();
 
     if (!customer.name || !customer.email) {
@@ -631,15 +652,15 @@ app.post("/api/payments", async (req, res) => {
       });
     }
 
-    if (!payment.token || !payment.paymentMethodId) {
+    if (paymentMethod === "card" && (!payment.token || !payment.paymentMethodId)) {
       return res.status(400).json({
         error: "Os dados do cartao nao foram carregados corretamente."
       });
     }
 
-    if (!payment.identificationNumber) {
+    if (!payment.identificationNumber && !customer.cpf) {
       return res.status(400).json({
-        error: "Informe o CPF do titular do cartao."
+        error: "Informe o CPF para continuar."
       });
     }
 
@@ -647,24 +668,6 @@ app.post("/api/payments", async (req, res) => {
       return res.status(400).json({
         error: "Informe um e-mail valido para liberar e acompanhar o pedido."
       });
-    }
-
-    if (bumpSelected) {
-      const requiredShipping = [
-        "name",
-        "cep",
-        "address",
-        "number",
-        "neighborhood",
-        "city",
-        "state"
-      ];
-      const missing = requiredShipping.find((field) => !shipping?.[field]);
-      if (missing) {
-        return res.status(400).json({
-          error: "Preencha todos os dados de entrega das capsulas."
-        });
-      }
     }
 
     if (offerKind !== "main" && !parentReference) {
@@ -679,7 +682,7 @@ app.post("/api/payments", async (req, res) => {
       });
     }
 
-    const items = buildItems(offerKind, bumpSelected);
+    const items = buildItems(offerKind);
     const total = calculateTotal(items);
     const reference = generateReference(offerKind);
     const accessToken = randomId(18);
@@ -693,29 +696,19 @@ app.post("/api/payments", async (req, res) => {
       statusDetail: "",
       paymentId: "",
       paymentMethodId: "",
+      selectedPaymentMethod: paymentMethod,
       installments: Number(payment.installments || 1),
       transactionAmount: total,
       total,
       items,
-      bumpSelected,
+      bumpSelected: false,
       customer: {
         name: String(customer.name || "").trim(),
         email: customerEmail,
         phone: String(customer.phone || "").trim(),
         cpf: onlyDigits(customer.cpf || payment.identificationNumber)
       },
-      shipping: bumpSelected
-        ? {
-            name: String(shipping.name || "").trim(),
-            cep: String(shipping.cep || "").trim(),
-            address: String(shipping.address || "").trim(),
-            number: String(shipping.number || "").trim(),
-            complement: String(shipping.complement || "").trim(),
-            neighborhood: String(shipping.neighborhood || "").trim(),
-            city: String(shipping.city || "").trim(),
-            state: String(shipping.state || "").trim()
-          }
-        : null,
+      shipping: null,
       delivery: {
         accessReleasedAt: null,
         emailReady: Boolean(customerEmail),
@@ -744,10 +737,12 @@ app.post("/api/payments", async (req, res) => {
       ok: true,
       reference: order.reference,
       rootReference,
+      paymentMethod,
       paymentId: order.paymentId,
       paymentStatus: order.paymentStatus,
       status: order.status,
       statusDetail: order.statusDetail,
+      pix: paymentMethod === "pix" ? extractPixData(paymentResponse) : null,
       accessToken: rootOrder ? rootOrder.accessToken : order.accessToken,
       accessUrl:
         rootOrder && rootOrder.status === "paid"
@@ -878,6 +873,43 @@ app.get("/acesso.html", (req, res) => {
   }
 
   res.sendFile(path.join(rootDir, "acesso.html"));
+});
+
+app.get(/^\/downloads\/.*$/, (req, res) => {
+  const reference = req.signedCookies.msr_access || "";
+  if (!reference) {
+    return res.redirect("/checkout.html");
+  }
+
+  const bundle = getBundle(reference);
+  if (!bundle || bundle.root.status !== "paid") {
+    return res.redirect("/checkout.html");
+  }
+
+  const requestedPath = normalizeDownloadPath(req.path);
+  const authorizedPaths = getAuthorizedDownloadPaths(bundle);
+
+  if (!requestedPath || !authorizedPaths.has(requestedPath)) {
+    return res.status(403).send("Arquivo indisponivel para esta sessao.");
+  }
+
+  const relativeFilePath = requestedPath.replace(/^\//, "");
+  const absoluteFilePath = path.resolve(rootDir, relativeFilePath);
+  const downloadsRoot = path.resolve(rootDir, "downloads");
+
+  if (!absoluteFilePath.startsWith(downloadsRoot + path.sep) && absoluteFilePath !== downloadsRoot) {
+    return res.status(403).send("Arquivo indisponivel para esta sessao.");
+  }
+
+  if (!fs.existsSync(absoluteFilePath)) {
+    return res.status(404).send("Arquivo nao encontrado.");
+  }
+
+  return res.sendFile(absoluteFilePath, {
+    headers: {
+      "Cache-Control": "private, no-store, max-age=0"
+    }
+  });
 });
 
 app.use(express.static(rootDir));

@@ -1,30 +1,33 @@
-const checkoutSessionKey = "msr14d-session";
+const checkoutSessionKey = "mdg7d-session";
 
 const fallbackCatalog = {
   main: {
-    name: "Metodo Seca Rapido 14D",
-    description: "Metodo digital com passo a passo de 14 dias.",
+    name: "Metodo Derreter Gordura",
+    description:
+      "Sistema de 7 dias que ativa a queima de gordura sem dieta pesada e sem academia.",
     price: 19.9,
     oldPrice: 97,
     type: "digital"
   },
   bump: {
-    name: "Capsulas Termogenicas",
-    description: "Complemento fisico opcional para a rotina.",
+    name: "Capsulas Seca Barriga",
+    description: "Complemento fisico opcional para acompanhar a rotina do metodo.",
     price: 19.9,
     oldPrice: 39.9,
     type: "physical"
   },
   upsell: {
-    name: "Acelerador Seca Rapido 30D",
-    description: "Plano complementar de continuidade por 30 dias.",
+    name: "Protocolo Barriga Zero 30D",
+    description:
+      "Plano complementar de 30 dias para manter a queima ativa depois da primeira semana.",
     price: 27,
     oldPrice: 67,
     type: "digital"
   },
   downsell: {
-    name: "Versao Essencial 21D",
-    description: "Versao mais curta e acessivel para continuidade.",
+    name: "Cardapio Inteligente 21D",
+    description:
+      "Versao mais enxuta para quem quer apoio alimentar simples com ticket menor.",
     price: 14.9,
     oldPrice: 37,
     type: "digital"
@@ -34,37 +37,56 @@ const fallbackCatalog = {
 const offerCopy = {
   main: {
     eyebrow: "Checkout principal",
-    title: "Voce esta a um passo de liberar o seu acesso.",
-    lead: "Preencha seus dados e finalize sem sair do site.",
+    title: "Voce esta a um passo de liberar o Metodo Derreter Gordura.",
+    lead:
+      "Finalize em poucos passos e receba o guia principal com plano de 7 dias, checklist e bonus no mesmo acesso.",
     priceNote: "pagamento unico",
     items: [
-      "Metodo Seca Rapido 14D completo",
-      "Checklist diario de acompanhamento",
-      "Guia de continuidade apos os 14 dias",
+      "Guia digital completo com 4 modulos praticos",
+      "Plano de 7 dias passo a passo",
+      "Checklist diario para manter o foco",
+      "5 bonus estrategicos dentro do material",
       "Garantia de 7 dias"
     ]
   },
   upsell: {
     eyebrow: "Oferta adicional",
-    title: "Finalize a sua oferta de continuidade de 30 dias.",
-    lead: "Esta oferta entra como complemento do pedido principal.",
+    title: "Leve tambem o Protocolo Barriga Zero 30D.",
+    lead:
+      "Essa oferta complementa o guia principal e ajuda a sustentar a queima por mais tempo.",
     priceNote: "pagamento unico",
     items: [
-      "Plano complementar por 30 dias",
-      "Rotina simples para manter o foco",
-      "Checklist semanal de continuidade"
+      "Plano complementar de 30 dias",
+      "Rotina de manutencao simples",
+      "Checklist de continuidade"
     ]
   },
   downsell: {
     eyebrow: "Ultima oferta",
-    title: "Finalize a versao essencial de continuidade.",
-    lead: "Uma opcao mais leve para seguir com um valor menor.",
+    title: "Finalize o Cardapio Inteligente 21D.",
+    lead:
+      "Uma opcao mais leve para quem quer um apoio alimentar pratico com valor menor.",
     priceNote: "pagamento unico",
     items: [
-      "Plano reduzido de 21 dias",
-      "Roteiro semanal simples",
-      "Guia enxuto para manter a rotina"
+      "Cardapio simples de 21 dias",
+      "Roteiro objetivo para o dia a dia",
+      "Material enxuto para continuidade"
     ]
+  }
+};
+
+const paymentCopy = {
+  pix: {
+    caption: "Gere o Pix em segundos e pague com QR Code ou copia e cola.",
+    submit: "GERAR PIX ⚡",
+    submitting: "GERANDO PIX...",
+    submitSuccess: "PIX GERADO ⚡"
+  },
+  card: {
+    caption: "Preencha os dados do cartao e finalize sem sair da pagina.",
+    submit: "PAGAR COM CARTAO 💳",
+    submitting: "PROCESSANDO CARTAO...",
+    submitSuccess: "PAGAR COM CARTAO 💳"
   }
 };
 
@@ -76,9 +98,11 @@ const state = {
   },
   offerKind: "main",
   parentReference: "",
-  bumpSelected: false,
+  paymentMethod: "pix",
   cardForm: null,
-  submitting: false
+  submitting: false,
+  cardholderTouched: false,
+  pixPollTimer: null
 };
 
 function formatBRL(value) {
@@ -94,6 +118,13 @@ function qs(selector) {
 
 function qsa(selector) {
   return Array.from(document.querySelectorAll(selector));
+}
+
+function setText(selector, value) {
+  const node = qs(selector);
+  if (node) {
+    node.textContent = value;
+  }
 }
 
 function getParams() {
@@ -135,12 +166,16 @@ function getOfferProduct() {
 
 function getCurrentTotal() {
   const product = getOfferProduct();
-  const base = Number(product.price || 0);
-  const bump =
-    state.offerKind === "main" && state.bumpSelected
-      ? Number(state.config.catalog?.bump?.price || fallbackCatalog.bump.price)
-      : 0;
-  return base + bump;
+  return Number(product.price || 0);
+}
+
+function getCompareTotal() {
+  const product = getOfferProduct();
+  return Number(product.oldPrice || 0);
+}
+
+function getSavingsTotal() {
+  return Math.max(0, getCompareTotal() - getCurrentTotal());
 }
 
 function setFeedback(message, type = "error") {
@@ -159,17 +194,86 @@ function clearFeedback() {
   feedback.classList.remove("success", "error");
 }
 
+function clearPixPolling() {
+  if (state.pixPollTimer) {
+    window.clearTimeout(state.pixPollTimer);
+    state.pixPollTimer = null;
+  }
+}
+
+function clearPixResult() {
+  clearPixPolling();
+  const resultBox = qs("[data-pix-result]");
+  const qrImage = qs("[data-pix-qr-image]");
+  const codeField = qs("[data-pix-code]");
+  const statusLink = qs("[data-pix-status-link]");
+  const statusLabel = qs("[data-pix-status-label]");
+
+  resultBox?.classList.add("hidden");
+  if (qrImage) {
+    qrImage.removeAttribute("src");
+  }
+  if (codeField) {
+    codeField.value = "";
+  }
+  if (statusLink) {
+    statusLink.setAttribute("href", "#");
+  }
+  if (statusLabel) {
+    statusLabel.textContent = "Aguardando pagamento";
+  }
+}
+
+async function handlePixSubmit() {
+  if (state.submitting) return;
+
+  clearFeedback();
+  setLoading(true);
+
+  try {
+    const { payload, customer } = await sendPayment(paymentPayloadFromPix(collectCustomer()));
+    saveSession({
+      rootReference: payload.rootReference,
+      currentReference: payload.reference,
+      accessToken: payload.accessToken,
+      customer,
+      paymentMethod: "pix"
+    });
+
+    if (typeof window.trackEvent === "function") {
+      window.trackEvent("PurchaseAttempt", {
+        offer: state.offerKind,
+        value: getCurrentTotal(),
+        method: "pix"
+      });
+    }
+
+    if (payload.paymentStatus === "approved") {
+      window.location.href = payload.nextUrl;
+      return;
+    }
+
+    renderPixResult(payload);
+  } catch (error) {
+    setFeedback(error.message || "Falha ao gerar o Pix.");
+  } finally {
+    setLoading(false);
+  }
+}
+
 function setLoading(loading) {
   state.submitting = loading;
   const button = qs("[data-submit-order]");
   if (!button) return;
+
+  const activeCopy = paymentCopy[state.paymentMethod];
   button.disabled = loading;
-  button.textContent = loading ? "PROCESSANDO..." : "PAGAR AGORA";
+  setText("[data-submit-label]", loading ? activeCopy.submitting : activeCopy.submit);
+  setText("[data-submit-total]", formatBRL(getCurrentTotal()));
 }
 
 function applyMasks() {
   const cpf = qs("#cpf");
-  const cep = qs("#shipping-cep");
 
   const formatCpf = (value) => {
     const digits = value.replace(/\D/g, "").slice(0, 11);
@@ -179,39 +283,35 @@ function applyMasks() {
       .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
   };
 
-  const formatCep = (value) => {
-    const digits = value.replace(/\D/g, "").slice(0, 8);
-    return digits.replace(/(\d{5})(\d)/, "$1-$2");
-  };
-
   cpf?.addEventListener("input", () => {
     cpf.value = formatCpf(cpf.value);
-  });
-
-  cep?.addEventListener("input", () => {
-    cep.value = formatCep(cep.value);
   });
 }
 
 function renderSummary() {
   const product = getOfferProduct();
   const copy = offerCopy[state.offerKind];
-  const bumpProduct = state.config.catalog?.bump || fallbackCatalog.bump;
-
   const itemsContainer = qs("[data-offer-items]");
   const parentBox = qs("[data-offer-parent-box]");
-  const bumpBox = qs("[data-bump-box]");
-  const bumpLineRow = qs("[data-bump-line-row]");
 
-  qs("[data-offer-eyebrow]").textContent = copy.eyebrow;
-  qs("[data-offer-title]").textContent = copy.title;
-  qs("[data-offer-lead]").textContent = copy.lead;
-  qs("[data-offer-old-price]").textContent = `De ${formatBRL(product.oldPrice)}`;
-  qs("[data-offer-price]").textContent = formatBRL(product.price);
-  qs("[data-offer-price-note]").textContent = copy.priceNote;
-  qs("[data-offer-description]").textContent = product.description;
-  qs("[data-order-line-title]").textContent = product.name;
-  qs("[data-order-line-price]").textContent = formatBRL(product.price);
+  setText("[data-offer-eyebrow]", copy.eyebrow);
+  setText("[data-offer-title]", copy.title);
+  setText("[data-offer-lead]", copy.lead);
+  setText("[data-offer-old-price]", `De ${formatBRL(product.oldPrice)}`);
+  setText("[data-offer-price]", formatBRL(product.price));
+  setText("[data-offer-price-note]", copy.priceNote);
+  setText("[data-offer-description]", product.description);
+
+  qsa("[data-order-line-title]").forEach((node) => {
+    node.textContent = product.name;
+  });
+
+  setText("[data-order-line-price]", formatBRL(product.price));
+  setText("[data-header-total]", formatBRL(getCurrentTotal()));
+  setText("[data-order-total]", formatBRL(getCurrentTotal()));
+  setText("[data-submit-total]", formatBRL(getCurrentTotal()));
+  setText("[data-order-compare]", formatBRL(getCompareTotal()));
+  setText("[data-order-savings]", formatBRL(getSavingsTotal()));
 
   itemsContainer.innerHTML = copy.items
     .map(
@@ -225,56 +325,23 @@ function renderSummary() {
     .join("");
 
   if (state.offerKind === "main") {
-    bumpBox?.classList.remove("hidden");
-    bumpLineRow?.classList.remove("hidden");
     parentBox?.classList.add("hidden");
   } else {
-    bumpBox?.classList.add("hidden");
-    bumpLineRow?.classList.add("hidden");
     parentBox?.classList.toggle("hidden", !state.parentReference);
     const refNode = qs("[data-parent-reference]");
     if (refNode) refNode.textContent = state.parentReference || "--";
   }
-
-  qs("[data-bump-line]").textContent = state.bumpSelected
-    ? formatBRL(bumpProduct.price)
-    : "R$ 0,00";
-  qs("[data-order-total]").textContent = formatBRL(getCurrentTotal());
-}
-
-function syncShippingVisibility() {
-  const shippingBox = qs("[data-bump-shipping]");
-  const shippingFields = qsa("[data-bump-shipping] input");
-  const active = state.offerKind === "main" && state.bumpSelected;
-  shippingBox?.classList.toggle("hidden", !active);
-
-  shippingFields.forEach((field) => {
-    if (active) {
-      field.setAttribute("required", "required");
-    } else {
-      field.removeAttribute("required");
-    }
-  });
 }
 
 function prefillFields() {
   const session = readSession();
   const customer = session.customer || {};
-  const shipping = session.shipping || {};
 
   const fields = {
     name: customer.name || "",
     email: customer.email || "",
     cpf: customer.cpf || "",
-    "cardholder-name": customer.name || "",
-    "shipping-name": shipping.name || customer.name || "",
-    "shipping-cep": shipping.cep || "",
-    "shipping-address": shipping.address || "",
-    "shipping-number": shipping.number || "",
-    "shipping-complement": shipping.complement || "",
-    "shipping-neighborhood": shipping.neighborhood || "",
-    "shipping-city": shipping.city || "",
-    "shipping-state": shipping.state || ""
+    "cardholder-name": customer.name || ""
   };
 
   Object.entries(fields).forEach(([id, value]) => {
@@ -285,20 +352,28 @@ function prefillFields() {
   });
 }
 
-function bindBump() {
-  const bumpToggle = qs("[data-bump-toggle]");
-  if (!bumpToggle) return;
+function bindSmartFields() {
+  const nameField = qs("#name");
+  const cardholderField = qs("#cardholder-name");
+  const emailField = qs("#email");
 
-  const session = readSession();
-  const initialState = state.offerKind === "main" && Boolean(session.bumpSelected);
-  bumpToggle.checked = initialState;
-  state.bumpSelected = initialState;
+  cardholderField?.addEventListener("input", () => {
+    state.cardholderTouched = Boolean(cardholderField.value.trim());
+  });
 
-  bumpToggle.addEventListener("change", () => {
-    state.bumpSelected = bumpToggle.checked;
-    saveSession({ bumpSelected: state.bumpSelected });
-    renderSummary();
-    syncShippingVisibility();
+  nameField?.addEventListener("input", () => {
+    const cleanName = nameField.value.trimStart();
+    if (nameField.value !== cleanName) {
+      nameField.value = cleanName;
+    }
+
+    if (cardholderField && !state.cardholderTouched) {
+      cardholderField.value = nameField.value;
+    }
+  });
+
+  emailField?.addEventListener("blur", () => {
+    emailField.value = emailField.value.trim().toLowerCase();
   });
 }
 
@@ -310,42 +385,19 @@ function collectCustomer() {
   };
 }
 
-function collectShipping() {
-  return {
-    name: qs("#shipping-name")?.value.trim() || "",
-    cep: qs("#shipping-cep")?.value.trim() || "",
-    address: qs("#shipping-address")?.value.trim() || "",
-    number: qs("#shipping-number")?.value.trim() || "",
-    complement: qs("#shipping-complement")?.value.trim() || "",
-    neighborhood: qs("#shipping-neighborhood")?.value.trim() || "",
-    city: qs("#shipping-city")?.value.trim() || "",
-    state: qs("#shipping-state")?.value.trim().toUpperCase() || ""
-  };
-}
-
-function validateBeforeSubmit(customer, shipping) {
+function validateBeforeSubmit(customer) {
   if (!customer.name || !customer.email || !customer.cpf) {
     return "Preencha nome, e-mail e CPF para continuar.";
   }
 
-  const cardholder = qs("#cardholder-name")?.value.trim() || "";
-  if (!cardholder) {
-    return "Informe o nome como esta no cartao.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
+    return "Digite um e-mail valido para receber seu acesso.";
   }
 
-  if (state.offerKind === "main" && state.bumpSelected) {
-    const required = [
-      shipping.name,
-      shipping.cep,
-      shipping.address,
-      shipping.number,
-      shipping.neighborhood,
-      shipping.city,
-      shipping.state
-    ];
-
-    if (required.some((field) => !field)) {
-      return "Preencha os dados de entrega para receber as capsulas.";
+  if (state.paymentMethod === "card") {
+    const cardholder = qs("#cardholder-name")?.value.trim() || "";
+    if (!cardholder) {
+      return "Informe o nome como esta no cartao.";
     }
   }
 
@@ -356,10 +408,31 @@ function validateBeforeSubmit(customer, shipping) {
   return "";
 }
 
-async function sendPayment(cardFormData) {
+function paymentPayloadFromCard(cardFormData) {
+  return {
+    method: "card",
+    token: cardFormData.token,
+    issuerId: cardFormData.issuerId,
+    paymentMethodId: cardFormData.paymentMethodId,
+    installments: cardFormData.installments,
+    identificationType: cardFormData.identificationType,
+    identificationNumber: cardFormData.identificationNumber,
+    cardholderName: qs("#cardholder-name")?.value.trim() || ""
+  };
+}
+
+function paymentPayloadFromPix(customer) {
+  return {
+    method: "pix",
+    paymentMethodId: "pix",
+    identificationType: "CPF",
+    identificationNumber: customer.cpf
+  };
+}
+
+async function sendPayment(paymentData) {
   const customer = collectCustomer();
-  const shipping = collectShipping();
-  const error = validateBeforeSubmit(customer, shipping);
+  const error = validateBeforeSubmit(customer);
 
   if (error) {
     throw new Error(error);
@@ -373,18 +446,8 @@ async function sendPayment(cardFormData) {
     body: JSON.stringify({
       offerKind: state.offerKind,
       parentReference: state.offerKind === "main" ? null : state.parentReference,
-      bumpSelected: state.bumpSelected,
       customer,
-      shipping,
-      payment: {
-        token: cardFormData.token,
-        issuerId: cardFormData.issuerId,
-        paymentMethodId: cardFormData.paymentMethodId,
-        installments: cardFormData.installments,
-        identificationType: cardFormData.identificationType,
-        identificationNumber: cardFormData.identificationNumber,
-        cardholderName: qs("#cardholder-name")?.value.trim() || ""
-      }
+      payment: paymentData
     })
   });
 
@@ -392,12 +455,143 @@ async function sendPayment(cardFormData) {
   if (!response.ok) {
     throw new Error(payload.error || "Nao foi possivel processar o pagamento.");
   }
-  return { payload, customer, shipping };
+
+  return { payload, customer };
+}
+
+function renderPaymentMethod() {
+  const submitButton = qs("[data-submit-order]");
+
+  qsa("[data-method-button]").forEach((button) => {
+    button.classList.toggle(
+      "active",
+      button.getAttribute("data-method-option") === state.paymentMethod
+    );
+  });
+
+  qs("[data-card-fields]")?.classList.toggle("hidden", state.paymentMethod !== "card");
+  qs("[data-pix-preview]")?.classList.toggle("hidden", state.paymentMethod !== "pix");
+  setText("[data-method-caption]", paymentCopy[state.paymentMethod].caption);
+  setText("[data-submit-label]", paymentCopy[state.paymentMethod].submit);
+  if (submitButton) {
+    submitButton.type = state.paymentMethod === "card" ? "submit" : "button";
+  }
+
+  if (state.paymentMethod !== "pix") {
+    clearPixResult();
+  }
+}
+
+function bindPaymentMethodSwitch() {
+  const session = readSession();
+  if (session.paymentMethod === "card" || session.paymentMethod === "pix") {
+    state.paymentMethod = session.paymentMethod;
+  }
+
+  qsa("[data-method-button]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const selected = button.getAttribute("data-method-option");
+      if (!selected || state.paymentMethod === selected) {
+        return;
+      }
+
+      state.paymentMethod = selected;
+      saveSession({ paymentMethod: selected });
+      clearFeedback();
+      renderPaymentMethod();
+    });
+  });
+
+  const copyPixButton = qs("[data-copy-pix]");
+  copyPixButton?.addEventListener("click", async () => {
+    const code = qs("[data-pix-code]")?.value || "";
+    if (!code) return;
+
+    try {
+      await navigator.clipboard.writeText(code);
+      copyPixButton.textContent = "CODIGO COPIADO";
+      window.setTimeout(() => {
+        copyPixButton.textContent = "COPIAR CODIGO PIX";
+      }, 1800);
+    } catch {
+      setFeedback("Nao foi possivel copiar automaticamente. Selecione o codigo Pix manualmente.");
+    }
+  });
+
+  const submitButton = qs("[data-submit-order]");
+  submitButton?.addEventListener("click", () => {
+    if (state.paymentMethod === "pix") {
+      handlePixSubmit();
+    }
+  });
+}
+
+async function pollPaymentStatus(reference) {
+  clearPixPolling();
+
+  const check = async () => {
+    try {
+      const response = await fetch(`/api/orders/${encodeURIComponent(reference)}`);
+      if (!response.ok) {
+        throw new Error("Falha ao consultar pedido.");
+      }
+
+      const data = await response.json();
+      if (data.access?.available && data.access?.url) {
+        window.location.href = data.access.url;
+        return;
+      }
+
+      if (data.root?.status === "rejected") {
+        setFeedback("O pagamento nao foi aprovado. Se preferir, tente novamente com outra forma.", "error");
+        return;
+      }
+
+      state.pixPollTimer = window.setTimeout(check, 4000);
+    } catch {
+      state.pixPollTimer = window.setTimeout(check, 6000);
+    }
+  };
+
+  state.pixPollTimer = window.setTimeout(check, 4000);
+}
+
+function renderPixResult(payload) {
+  const resultBox = qs("[data-pix-result]");
+  const qrImage = qs("[data-pix-qr-image]");
+  const codeField = qs("[data-pix-code]");
+  const statusLink = qs("[data-pix-status-link]");
+  const statusLabel = qs("[data-pix-status-label]");
+  const pix = payload.pix || {};
+  const reference = payload.rootReference || payload.reference;
+
+  if (!pix.qrCode || !pix.qrCodeBase64) {
+    window.location.href = payload.nextUrl;
+    return;
+  }
+
+  if (qrImage) {
+    qrImage.src = `data:image/png;base64,${pix.qrCodeBase64}`;
+  }
+  if (codeField) {
+    codeField.value = pix.qrCode;
+  }
+  if (statusLink) {
+    statusLink.href = payload.nextUrl;
+  }
+  if (statusLabel) {
+    statusLabel.textContent = "Aguardando pagamento";
+  }
+
+  resultBox?.classList.remove("hidden");
+  resultBox?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  setFeedback("Pix gerado com sucesso. Pague com o QR Code ou use o copia e cola abaixo.", "success");
+  pollPaymentStatus(reference);
 }
 
 function mountMercadoPago() {
   if (!window.MercadoPago || !state.config.publicKey) {
-    setFeedback("Configure a PUBLIC_KEY do Mercado Pago para ativar o checkout.");
     return;
   }
 
@@ -445,47 +639,57 @@ function mountMercadoPago() {
       }
     },
     callbacks: {
-      onFormMounted: (error) => {
-        if (error) {
-          setFeedback("Nao foi possivel carregar os campos seguros do cartao.");
-        }
-      },
+      onFormMounted: () => {},
       onSubmit: async (event) => {
         event.preventDefault();
         if (state.submitting) return;
+        if (state.paymentMethod !== "card") return;
 
         clearFeedback();
         setLoading(true);
 
         try {
-          const cardFormData = state.cardForm.getCardFormData();
-          if (!cardFormData.token || !cardFormData.paymentMethodId) {
-            throw new Error("Preencha corretamente os dados do cartao.");
+          let paymentData;
+
+          if (state.paymentMethod === "card") {
+            const cardFormData = state.cardForm.getCardFormData();
+            if (!cardFormData.token || !cardFormData.paymentMethodId) {
+              throw new Error("Preencha corretamente os dados do cartao.");
+            }
+            paymentData = paymentPayloadFromCard(cardFormData);
+          } else {
+            paymentData = paymentPayloadFromPix(collectCustomer());
           }
 
-          const { payload, customer, shipping } = await sendPayment(cardFormData);
+          const { payload, customer } = await sendPayment(paymentData);
           saveSession({
             rootReference: payload.rootReference,
             currentReference: payload.reference,
             accessToken: payload.accessToken,
-            bumpSelected: state.bumpSelected,
             customer,
-            shipping
+            paymentMethod: state.paymentMethod
           });
 
           if (typeof window.trackEvent === "function") {
             window.trackEvent("PurchaseAttempt", {
               offer: state.offerKind,
-              value: getCurrentTotal()
+              value: getCurrentTotal(),
+              method: state.paymentMethod
             });
+          }
 
-            if (payload.paymentStatus === "approved") {
-              window.trackEvent("PurchaseApproved", {
-                offer: state.offerKind,
-                value: getCurrentTotal(),
-                reference: payload.reference
-              });
-            }
+          if (state.paymentMethod === "pix" && payload.paymentStatus !== "approved") {
+            renderPixResult(payload);
+            return;
+          }
+
+          if (typeof window.trackEvent === "function" && payload.paymentStatus === "approved") {
+            window.trackEvent("PurchaseApproved", {
+              offer: state.offerKind,
+              value: getCurrentTotal(),
+              reference: payload.reference,
+              method: state.paymentMethod
+            });
           }
 
           window.location.href = payload.nextUrl;
@@ -504,6 +708,8 @@ async function init() {
   resolveOfferKind();
   applyMasks();
   prefillFields();
+  bindSmartFields();
+  bindPaymentMethodSwitch();
 
   try {
     await loadConfig();
@@ -512,12 +718,11 @@ async function init() {
   }
 
   renderSummary();
-  bindBump();
-  syncShippingVisibility();
+  renderPaymentMethod();
 
   if (!state.config.paymentEnabled) {
     setFeedback(
-      "Adicione a PUBLIC_KEY e o ACCESS_TOKEN no arquivo .env para ativar o pagamento."
+      "Pagamento temporariamente indisponivel. Atualize a pagina em alguns instantes."
     );
     return;
   }
