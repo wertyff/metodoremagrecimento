@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>Pedido Confirmado | Metodo Seca Rapido 14D</title>
+    <meta
+      name="description"
+      content="Pagina de confirmacao com status do pedido e liberacao automatica do acesso."
+    />
+    <meta name="theme-color" content="#111111" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="funnel.css" />
+  </head>
+  <body class="funnel-body dark">
+    <div class="topline">
+      Estamos verificando o seu pagamento e preparando a liberacao do acesso.
+    </div>
+
+    <main class="funnel-main">
+      <div class="container">
+        <div class="progress">
+          <span>1. Checkout</span>
+          <span>2. Oferta Especial</span>
+          <span class="active">3. Acesso Liberado</span>
+        </div>
+
+        <div class="thankyou-grid">
+          <section class="thankyou-panel">
+            <div class="eyebrow" data-status-pill>Status do pedido</div>
+            <h1 data-status-title>Estamos conferindo o seu pagamento.</h1>
+            <p class="lead" data-status-text>
+              Se o pagamento ja foi aprovado, o acesso sera liberado automaticamente em instantes.
+            </p>
+
+            <div class="status-box" data-status-box>
+              <strong>Referencia do pedido</strong>
+              <span data-order-reference>--</span>
+            </div>
+
+            <div class="thankyou-boxes">
+              <a class="btn btn-primary hidden" data-access-button href="#">
+                IR PARA O ACESSO
+              </a>
+              <button class="btn btn-dark" data-refresh-order type="button">
+                ATUALIZAR STATUS
+              </button>
+            </div>
+
+            <div class="thankyou-boxes">
+              <div class="mini-card">
+                <strong>Confirmacao automatica</strong>
+                <p>O webhook atualiza o pedido sem precisar aprovar manualmente.</p>
+              </div>
+              <div class="mini-card">
+                <strong>Entrega automatica</strong>
+                <p>Quando o status estiver aprovado, o acesso abre no mesmo fluxo.</p>
+              </div>
+            </div>
+          </section>
+
+          <aside class="thankyou-panel light-summary">
+            <div class="eyebrow">Resumo da compra</div>
+            <h2>Itens confirmados</h2>
+            <div class="summary-list" data-order-items></div>
+
+            <div class="order-row total">
+              <span>Total aprovado</span>
+              <strong data-final-total>R$ 0,00</strong>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <script src="funnel.js"></script>
+  </body>
+</html>

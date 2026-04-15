@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>Acesso Liberado | Metodo Seca Rapido 14D</title>
+    <meta
+      name="description"
+      content="Area de acesso do Metodo Seca Rapido 14D liberada apos aprovacao do pagamento."
+    />
+    <meta name="theme-color" content="#111111" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="funnel.css" />
+  </head>
+  <body class="funnel-body dark">
+    <div class="topline">
+      Acesso liberado com sucesso. Guarde esta pagina para voltar quando quiser.
+    </div>
+
+    <main class="funnel-main">
+      <div class="container">
+        <section class="thankyou-panel access-panel">
+          <div class="eyebrow">Area do aluno</div>
+          <h1><span data-access-name>Cliente</span>, seu acesso esta liberado.</h1>
+          <p class="lead">
+            Seu pedido foi confirmado e o conteudo abaixo ja pode ser usado no celular ou no computador.
+          </p>
+
+          <div class="member-grid">
+            <div class="summary-box">
+              <h3>Seu pedido</h3>
+              <p class="micro-note">Referencia: <strong data-access-reference>--</strong></p>
+              <div class="summary-list" data-access-items></div>
+            </div>
+
+            <div class="summary-box">
+              <h3>Como comecar</h3>
+              <ul class="access-list">
+                <li>Abra o guia principal e siga o Dia 1</li>
+                <li>Use o checklist diario para manter o ritmo</li>
+                <li>Se comprou extras, eles ja aparecem no seu pacote</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="summary-box">
+            <h3>Conteudo liberado</h3>
+            <p class="micro-note">
+              Os modulos abaixo aparecem automaticamente conforme os itens aprovados no pagamento.
+            </p>
+            <div class="access-content-grid" data-access-content></div>
+          </div>
+
+          <div class="summary-box hidden" data-physical-box>
+            <h3>Itens fisicos confirmados</h3>
+            <p class="micro-note">
+              Se voce adicionou um complemento fisico, os dados de entrega aparecem aqui.
+            </p>
+            <div class="shipping-list" data-shipping-items></div>
+          </div>
+
+          <div class="thankyou-boxes">
+            <a class="btn btn-primary" href="index.html">Voltar para o site</a>
+            <a class="btn btn-dark hidden" data-support-link href="#">
+              FALAR COM O SUPORTE
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="funnel.js"></script>
+  </body>
+</html>

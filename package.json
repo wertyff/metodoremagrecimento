@@ -1,0 +1,18 @@
+{
+  "name": "metodo-seca-rapido-14d",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing e checkout transparente com Mercado Pago para o Metodo Seca Rapido 14D",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2"
+  }
+}
