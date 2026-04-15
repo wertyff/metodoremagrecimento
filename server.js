@@ -42,7 +42,7 @@ const catalog = {
     kind: "main",
     name: "Metodo Derreter Gordura",
     description: "Sistema de 7 dias que ativa a queima de gordura sem dieta pesada e sem academia.",
-    price: 19.9,
+    price: 0.5,
     oldPrice: 97,
     type: "digital",
     delivery: {
