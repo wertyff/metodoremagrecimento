@@ -19,6 +19,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <script src="tiktok-pixel-base.js"></script>
     <script>
       window.LP_CONFIG = {
         checkoutUrl: "checkout.html",
@@ -26,12 +27,6 @@
         vslEmbedUrl: ""
       };
       window.dataLayer = window.dataLayer || [];
-      window.trackEvent = function trackEvent(name, params) {
-        window.dataLayer.push({ event: name, ...params });
-        if (window.ttq && typeof window.ttq.track === "function") {
-          window.ttq.track(name, params || {});
-        }
-      };
     </script>
   </head>
   <body class="vsl-page">
