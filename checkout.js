@@ -78,15 +78,15 @@ const offerCopy = {
 const paymentCopy = {
   pix: {
     caption: "Gere o Pix em segundos e pague com QR Code ou copia e cola.",
-    submit: "GERAR PIX ⚡",
+    submit: "GERAR PIX \u26A1",
     submitting: "GERANDO PIX...",
-    submitSuccess: "PIX GERADO ⚡"
+    submitSuccess: "PIX GERADO \u26A1"
   },
   card: {
     caption: "Preencha os dados do cartao e finalize sem sair da pagina.",
-    submit: "PAGAR COM CARTAO 💳",
+    submit: "PAGAR COM CARTAO \uD83D\uDCB3",
     submitting: "PROCESSANDO CARTAO...",
-    submitSuccess: "PAGAR COM CARTAO 💳"
+    submitSuccess: "PAGAR COM CARTAO \uD83D\uDCB3"
   }
 };
 
@@ -332,7 +332,7 @@ function renderSummary() {
       (item) => `
         <div class="summary-item">
           <span>${item}</span>
-          <strong>Incluido</strong>
+          <strong class="summary-item-badge">Acesso liberado</strong>
         </div>
       `
     )
