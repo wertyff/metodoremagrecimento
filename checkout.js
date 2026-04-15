@@ -145,12 +145,26 @@ function saveSession(data) {
   localStorage.setItem(checkoutSessionKey, JSON.stringify({ ...current, ...data }));
 }
 
+async function parseJsonResponse(response) {
+  const raw = await response.text();
+
+  if (!raw) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw new Error("Resposta invalida do servidor. Atualize a pagina e tente novamente.");
+  }
+}
+
 async function loadConfig() {
   const response = await fetch("/api/config");
   if (!response.ok) {
     throw new Error("Nao foi possivel carregar a configuracao do checkout.");
   }
-  state.config = await response.json();
+  state.config = await parseJsonResponse(response);
 }
 
 function resolveOfferKind() {
@@ -451,7 +465,7 @@ async function sendPayment(paymentData) {
     })
   });
 
-  const payload = await response.json();
+  const payload = await parseJsonResponse(response);
   if (!response.ok) {
     throw new Error(payload.error || "Nao foi possivel processar o pagamento.");
   }
@@ -536,7 +550,7 @@ async function pollPaymentStatus(reference) {
         throw new Error("Falha ao consultar pedido.");
       }
 
-      const data = await response.json();
+      const data = await parseJsonResponse(response);
       if (data.access?.available && data.access?.url) {
         window.location.href = data.access.url;
         return;
