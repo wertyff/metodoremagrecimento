@@ -14,13 +14,30 @@ function applyCheckoutLinks() {
 
 function bindTracking() {
   if (typeof window.trackEvent === "function") {
-    window.trackEvent("ViewContent", { page: "metodo-derreter-gordura-vsl" });
+    window.trackEvent("ViewContent", {
+      page: "metodo-derreter-gordura-vsl",
+      offer: "main",
+      value: 19.9
+    });
   }
 
   checkoutLinks.forEach((button) => {
     button.addEventListener("click", () => {
       if (typeof window.trackEvent === "function") {
-        window.trackEvent("InitiateCheckout", { source: "landing_vsl" });
+        window.trackEvent("AddToCart", {
+          source: "landing_vsl",
+          offer: "main",
+          value: 19.9,
+          cta_name: button.textContent.trim(),
+          cta_position:
+            button.closest(".sticky-cta")
+              ? "sticky"
+              : button.closest(".final-cta")
+                ? "final"
+                : button.closest(".offer-section")
+                  ? "offer"
+                  : "hero"
+        });
       }
     });
   });
@@ -36,6 +53,13 @@ function bindFaq() {
       faqItems.forEach((faqItem) => faqItem.classList.remove("open"));
       if (!isOpen) {
         item.classList.add("open");
+        if (typeof window.trackEvent === "function") {
+          window.trackEvent("FAQOpen", {
+            offer: "main",
+            question: button.textContent.trim(),
+            section: "faq"
+          });
+        }
       }
     });
   });
@@ -43,9 +67,18 @@ function bindFaq() {
 
 function handleStickyCta() {
   if (!stickyCta) return;
+  let stickyTracked = false;
 
   const toggleSticky = () => {
     stickyCta.classList.toggle("visible", window.scrollY > 680);
+    if (!stickyTracked && window.scrollY > 680 && typeof window.trackEvent === "function") {
+      stickyTracked = true;
+      window.trackEvent("StickyCTAVisible", {
+        offer: "main",
+        value: 19.9,
+        section: "sticky"
+      });
+    }
   };
 
   toggleSticky();
@@ -91,9 +124,38 @@ function setupVsl() {
     }
 
     if (typeof window.trackEvent === "function") {
-      window.trackEvent("PlayVSL", { page: "metodo-derreter-gordura-vsl" });
+      window.trackEvent("PlayVSL", {
+        page: "metodo-derreter-gordura-vsl",
+        offer: "main",
+        value: 19.9,
+        section: "hero-vsl"
+      });
     }
   });
+}
+
+function setupDepthTracking() {
+  let depthTracked = false;
+
+  const handleScroll = () => {
+    const doc = document.documentElement;
+    const maxScroll = doc.scrollHeight - window.innerHeight;
+    if (maxScroll <= 0) return;
+
+    const progress = window.scrollY / maxScroll;
+    if (!depthTracked && progress >= 0.75 && typeof window.trackEvent === "function") {
+      depthTracked = true;
+      window.trackEvent("ScrollDepth75", {
+        offer: "main",
+        value: 19.9,
+        scroll_percent: 75
+      });
+      window.removeEventListener("scroll", handleScroll);
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll, { passive: true });
+  handleScroll();
 }
 
 applyCheckoutLinks();
@@ -102,3 +164,4 @@ bindFaq();
 handleStickyCta();
 setupReveal();
 setupVsl();
+setupDepthTracking();

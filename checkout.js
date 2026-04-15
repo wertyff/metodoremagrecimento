@@ -5,7 +5,7 @@ const fallbackCatalog = {
     name: "Metodo Derreter Gordura",
     description:
       "Sistema de 7 dias que ativa a queima de gordura sem dieta pesada e sem academia.",
-    price: 0.5,
+    price: 19.9,
     oldPrice: 97,
     type: "digital"
   },
@@ -102,7 +102,8 @@ const state = {
   cardForm: null,
   submitting: false,
   cardholderTouched: false,
-  pixPollTimer: null
+  pixPollTimer: null,
+  paymentInfoTracked: false
 };
 
 function formatBRL(value) {
@@ -253,16 +254,32 @@ async function handlePixSubmit() {
       customer,
       paymentMethod: "pix"
     });
+    await identifyCheckoutCustomer(customer, payload.rootReference || payload.reference);
 
     if (typeof window.trackEvent === "function") {
-      window.trackEvent("PurchaseAttempt", {
+      window.trackEvent("PlaceAnOrder", {
         offer: state.offerKind,
         value: getCurrentTotal(),
-        method: "pix"
+        method: "pix",
+        section: "checkout-submit",
+        cta_name: "GERAR PIX"
       });
     }
 
     if (payload.paymentStatus === "approved") {
+      if (typeof window.trackEvent === "function") {
+        window.trackEvent("Purchase", {
+          offer: state.offerKind,
+          value: getCurrentTotal(),
+          reference: payload.reference,
+          method: "pix",
+          status: "approved",
+          root_reference: payload.rootReference || payload.reference
+        });
+        if (window.tiktokPixel) {
+          window.tiktokPixel.markPurchase(payload.rootReference || payload.reference);
+        }
+      }
       window.location.href = payload.nextUrl;
       return;
     }
@@ -399,6 +416,21 @@ function collectCustomer() {
   };
 }
 
+async function identifyCheckoutCustomer(customer, reference) {
+  if (typeof window.tiktokIdentify !== "function") {
+    return;
+  }
+
+  try {
+    await window.tiktokIdentify({
+      email: customer.email,
+      external_id: reference
+    });
+  } catch {
+    // Falha de identificacao nao deve bloquear o checkout.
+  }
+}
+
 function validateBeforeSubmit(customer) {
   if (!customer.name || !customer.email || !customer.cpf) {
     return "Preencha nome, e-mail e CPF para continuar.";
@@ -491,6 +523,20 @@ function renderPaymentMethod() {
     submitButton.type = state.paymentMethod === "card" ? "submit" : "button";
   }
 
+  if (
+    state.paymentMethod === "card" &&
+    !state.paymentInfoTracked &&
+    typeof window.trackEvent === "function"
+  ) {
+    state.paymentInfoTracked = true;
+    window.trackEvent("AddPaymentInfo", {
+      offer: state.offerKind,
+      value: getCurrentTotal(),
+      method: "card",
+      section: "payment-method"
+    });
+  }
+
   if (state.paymentMethod !== "pix") {
     clearPixResult();
   }
@@ -510,8 +556,17 @@ function bindPaymentMethodSwitch() {
       }
 
       state.paymentMethod = selected;
+      state.paymentInfoTracked = false;
       saveSession({ paymentMethod: selected });
       clearFeedback();
+      if (typeof window.trackEvent === "function") {
+        window.trackEvent("PaymentMethodSelected", {
+          offer: state.offerKind,
+          value: getCurrentTotal(),
+          method: selected,
+          section: "payment-method"
+        });
+      }
       renderPaymentMethod();
     });
   });
@@ -524,6 +579,14 @@ function bindPaymentMethodSwitch() {
     try {
       await navigator.clipboard.writeText(code);
       copyPixButton.textContent = "CODIGO COPIADO";
+      if (typeof window.trackEvent === "function") {
+        window.trackEvent("CopyPixCode", {
+          offer: state.offerKind,
+          value: getCurrentTotal(),
+          method: "pix",
+          label: "pix-copy-paste"
+        });
+      }
       window.setTimeout(() => {
         copyPixButton.textContent = "COPIAR CODIGO PIX";
       }, 1800);
@@ -557,6 +620,14 @@ async function pollPaymentStatus(reference) {
       }
 
       if (data.root?.status === "rejected") {
+        if (typeof window.trackEvent === "function") {
+          window.trackEvent("PaymentRejected", {
+            offer: state.offerKind,
+            value: getCurrentTotal(),
+            reference,
+            status: "rejected"
+          });
+        }
         setFeedback("O pagamento nao foi aprovado. Se preferir, tente novamente com outra forma.", "error");
         return;
       }
@@ -599,6 +670,16 @@ function renderPixResult(payload) {
 
   resultBox?.classList.remove("hidden");
   resultBox?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  if (typeof window.trackEvent === "function") {
+    window.trackEvent("PixGenerated", {
+      offer: state.offerKind,
+      value: getCurrentTotal(),
+      reference,
+      method: "pix",
+      status: "pending"
+    });
+  }
 
   setFeedback("Pix gerado com sucesso. Pague com o QR Code ou use o copia e cola abaixo.", "success");
   pollPaymentStatus(reference);
@@ -683,12 +764,15 @@ function mountMercadoPago() {
             customer,
             paymentMethod: state.paymentMethod
           });
+          await identifyCheckoutCustomer(customer, payload.rootReference || payload.reference);
 
           if (typeof window.trackEvent === "function") {
-            window.trackEvent("PurchaseAttempt", {
+            window.trackEvent("PlaceAnOrder", {
               offer: state.offerKind,
               value: getCurrentTotal(),
-              method: state.paymentMethod
+              method: state.paymentMethod,
+              section: "checkout-submit",
+              cta_name: "PAGAR COM CARTAO"
             });
           }
 
@@ -698,12 +782,17 @@ function mountMercadoPago() {
           }
 
           if (typeof window.trackEvent === "function" && payload.paymentStatus === "approved") {
-            window.trackEvent("PurchaseApproved", {
+            window.trackEvent("Purchase", {
               offer: state.offerKind,
               value: getCurrentTotal(),
               reference: payload.reference,
-              method: state.paymentMethod
+              method: state.paymentMethod,
+              status: "approved",
+              root_reference: payload.rootReference || payload.reference
             });
+            if (window.tiktokPixel) {
+              window.tiktokPixel.markPurchase(payload.rootReference || payload.reference);
+            }
           }
 
           window.location.href = payload.nextUrl;

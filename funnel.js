@@ -66,11 +66,27 @@ function setupUpsell() {
   const reference = renderParentReference();
 
   accept?.addEventListener("click", () => {
+    if (typeof window.trackEvent === "function") {
+      window.trackEvent("AddToCart", {
+        offer: "upsell",
+        value: 27,
+        cta_name: "QUERO ADICIONAR",
+        cta_position: "upsell-primary"
+      });
+    }
     saveSession({ rootReference: reference });
     window.location.href = `checkout.html?offer=upsell&parent=${encodeURIComponent(reference)}`;
   });
 
   decline?.addEventListener("click", () => {
+    if (typeof window.trackEvent === "function") {
+      window.trackEvent("UpsellDeclined", {
+        offer: "upsell",
+        reference,
+        cta_name: "NAO, PREFIRO SEGUIR",
+        cta_position: "upsell-secondary"
+      });
+    }
     saveSession({ rootReference: reference });
     window.location.href = `downsell.html?ref=${encodeURIComponent(reference)}`;
   });
@@ -119,11 +135,27 @@ function setupDownsell() {
   const reference = renderParentReference();
 
   accept?.addEventListener("click", () => {
+    if (typeof window.trackEvent === "function") {
+      window.trackEvent("AddToCart", {
+        offer: "downsell",
+        value: 14.9,
+        cta_name: "QUERO ADICIONAR",
+        cta_position: "downsell-primary"
+      });
+    }
     saveSession({ rootReference: reference });
     window.location.href = `checkout.html?offer=downsell&parent=${encodeURIComponent(reference)}`;
   });
 
   skip?.addEventListener("click", () => {
+    if (typeof window.trackEvent === "function") {
+      window.trackEvent("DownsellDeclined", {
+        offer: "downsell",
+        reference,
+        cta_name: "NAO, QUERO O MEU ACESSO",
+        cta_position: "downsell-secondary"
+      });
+    }
     saveSession({ rootReference: reference });
     window.location.href = `obrigado.html?ref=${encodeURIComponent(reference)}`;
   });
@@ -222,6 +254,25 @@ async function setupThankYou() {
       accessButton.classList.toggle("hidden", !data.access.available);
       if (data.access.available) {
         accessButton.setAttribute("href", data.access.url);
+        if (
+          typeof window.trackEvent === "function" &&
+          window.tiktokPixel &&
+          !window.tiktokPixel.hasTrackedPurchase(data.root.reference)
+        ) {
+          window.trackEvent("Purchase", {
+            offer: data.root.kind || "main",
+            value: Number(data.approvedTotal || 0),
+            reference: data.root.reference,
+            status: "approved",
+            root_reference: data.root.reference,
+            contents: (data.approvedItems || []).map((item) => ({
+              content_id: item.code,
+              content_type: item.type === "physical" ? "product_group" : "product",
+              content_name: item.name
+            }))
+          });
+          window.tiktokPixel.markPurchase(data.root.reference);
+        }
         if (!accessRedirectScheduled) {
           accessRedirectScheduled = true;
           window.setTimeout(() => {
@@ -250,6 +301,13 @@ async function setupThankYou() {
   };
 
   refreshButton?.addEventListener("click", () => {
+    if (typeof window.trackEvent === "function") {
+      window.trackEvent("RefreshOrderStatus", {
+        offer: "main",
+        reference,
+        section: "thankyou-status"
+      });
+    }
     refresh();
   });
 
@@ -276,6 +334,13 @@ async function setupAccess() {
     }
 
     const data = await response.json();
+    if (typeof window.tiktokIdentify === "function") {
+      window.tiktokIdentify({
+        email: data.email,
+        external_id: data.reference
+      }).catch(() => {});
+    }
+
     nameEl.textContent = data.customerName || "Cliente";
     refEl.textContent = data.reference || "--";
 
@@ -377,6 +442,47 @@ async function setupAccess() {
         }
       }
     }
+
+    if (typeof window.trackEvent === "function") {
+      const alreadyTracked =
+        window.tiktokPixel &&
+        window.tiktokPixel.hasTrackedEvent("complete-registration", data.reference);
+
+      if (!alreadyTracked) {
+        window.trackEvent("CompleteRegistration", {
+          offer: "main",
+          value: Number(
+            (data.items || []).reduce((sum, item) => sum + Number(item.price || 0), 0)
+          ),
+          reference: data.reference,
+          root_reference: data.reference,
+          status: "access-released",
+          contents: (data.items || []).map((item) => ({
+            content_id: item.code,
+            content_type: item.type === "physical" ? "product_group" : "product",
+            content_name: item.name
+          }))
+        });
+        if (window.tiktokPixel) {
+          window.tiktokPixel.markEvent("complete-registration", data.reference);
+        }
+      }
+    }
+
+    contentEl.addEventListener("click", (event) => {
+      const link = event.target.closest(".download-link");
+      if (!link || typeof window.trackEvent !== "function") {
+        return;
+      }
+
+      window.trackEvent("DownloadContent", {
+        offer: "main",
+        reference: data.reference,
+        root_reference: data.reference,
+        label: link.textContent.trim(),
+        asset_url: link.getAttribute("href") || ""
+      });
+    });
   } catch (_error) {
     window.location.href = "checkout.html";
   }
