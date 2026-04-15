@@ -177,7 +177,7 @@
                     <span class="section-kicker">Etapa 1</span>
                     <h3>Seus dados</h3>
                   </div>
-                  <span class="section-helper">Leva menos de 1 minuto</span>
+                  <span class="section-helper">So o essencial para liberar seu acesso</span>
                 </div>
 
                 <div class="field-grid">
@@ -196,15 +196,10 @@
                   </div>
                 </div>
 
-                <div class="field">
-                  <label for="cpf">CPF do titular</label>
-                  <input
-                    id="cpf"
-                    name="cpf"
-                    placeholder="000.000.000-00"
-                    inputmode="numeric"
-                  />
-                </div>
+                <p class="micro-note">
+                  No Pix, voce preenche so nome e e-mail. Se escolher cartao, vamos pedir
+                  apenas os dados obrigatorios do pagamento.
+                </p>
               </div>
 
               <div class="form-section hidden" data-card-fields>
@@ -267,6 +262,16 @@
                       name="identificationType"
                     ></select>
                   </div>
+                </div>
+
+                <div class="field">
+                  <label for="cpf">CPF do titular do cartao</label>
+                  <input
+                    id="cpf"
+                    name="cpf"
+                    placeholder="000.000.000-00"
+                    inputmode="numeric"
+                  />
                 </div>
 
                 <div class="payment-mini-pills">
@@ -345,6 +350,14 @@
                   <strong>Liberacao automatica</strong>
                   <span>O acesso aparece assim que o pagamento aprova</span>
                 </div>
+              </div>
+
+              <div class="support-inline-box">
+                <strong>Se o banco demorar para atualizar, tudo bem</strong>
+                <p>
+                  Esta pagina e sincronizada automaticamente. Se o pagamento for por Pix,
+                  voce pode concluir agora e o acesso entra assim que a aprovacao chegar.
+                </p>
               </div>
             </form>
 

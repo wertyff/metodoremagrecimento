@@ -241,6 +241,8 @@ function summarizeOrder(order) {
     kind: order.kind,
     status: order.status,
     paymentStatus: order.paymentStatus,
+    selectedPaymentMethod: order.selectedPaymentMethod || "",
+    paymentMethodId: order.paymentMethodId || "",
     statusDetail: order.statusDetail,
     total: order.total,
     createdAt: order.createdAt,
@@ -393,6 +395,7 @@ function splitPhone(rawPhone) {
 function buildPaymentPayload(order, paymentData) {
   const { firstName, lastName } = formatNameParts(order.customer.name);
   const phone = splitPhone(order.customer.phone);
+  const identificationNumber = onlyDigits(paymentData.identificationNumber || order.customer.cpf);
 
   const additionalInfo = {
     items: order.items.map((item) => ({
@@ -420,10 +423,14 @@ function buildPaymentPayload(order, paymentData) {
       first_name: firstName,
       last_name: lastName,
       entity_type: "individual",
-      identification: {
-        type: paymentData.identificationType || "CPF",
-        number: onlyDigits(paymentData.identificationNumber)
-      }
+      ...(identificationNumber
+        ? {
+            identification: {
+              type: paymentData.identificationType || "CPF",
+              number: identificationNumber
+            }
+          }
+        : {})
     },
     additional_info: additionalInfo,
     metadata: {
@@ -658,9 +665,9 @@ app.post("/api/payments", async (req, res) => {
       });
     }
 
-    if (!payment.identificationNumber && !customer.cpf) {
+    if (paymentMethod === "card" && !payment.identificationNumber && !customer.cpf) {
       return res.status(400).json({
-        error: "Informe o CPF para continuar."
+        error: "Informe o CPF do titular do cartao para continuar."
       });
     }
 

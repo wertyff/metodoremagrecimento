@@ -602,6 +602,26 @@ small {
   border: 1px solid rgba(31, 140, 77, 0.14);
 }
 
+.support-inline-box,
+.payment-helper-box,
+.summary-help-box,
+.status-highlight-card {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(255, 247, 245, 0.95), rgba(255, 255, 255, 0.98));
+  border: 1px solid rgba(207, 42, 27, 0.1);
+}
+
+.support-inline-box strong,
+.payment-helper-box strong,
+.summary-help-box strong,
+.status-highlight-card strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
 .pix-preview-copy strong,
 .pix-result-head h3 {
   color: var(--text);
@@ -979,6 +999,170 @@ small {
   line-height: 1.45;
 }
 
+.status-reference-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.copy-inline-btn {
+  min-height: 42px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(24, 24, 24, 0.12);
+  background: #ffffff;
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.status-highlight-grid {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.status-highlight-card p,
+.payment-helper-copy p,
+.summary-help-box p,
+.pix-helper-top p {
+  margin: 0;
+}
+
+.payment-helper-box {
+  margin-bottom: 18px;
+}
+
+.payment-helper-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.pix-helper {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(244, 255, 247, 0.98), rgba(255, 255, 255, 0.98));
+  border: 1px solid rgba(31, 140, 77, 0.14);
+}
+
+.pix-helper-top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.pix-helper-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(31, 140, 77, 0.12);
+  color: var(--green);
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.pix-helper-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.pix-helper-qr {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(24, 24, 24, 0.07);
+}
+
+.pix-helper-qr img {
+  width: min(100%, 200px);
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+
+.pix-helper-code {
+  display: grid;
+  gap: 10px;
+}
+
+.pix-helper-code label {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.pix-helper-code textarea {
+  width: 100%;
+  min-height: 108px;
+  resize: vertical;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(24, 24, 24, 0.12);
+  background: #ffffff;
+  color: var(--text);
+  font: inherit;
+  line-height: 1.6;
+}
+
+.pix-helper-actions,
+.status-steps {
+  display: grid;
+  gap: 12px;
+}
+
+.status-step {
+  display: flex;
+  align-items: start;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(24, 24, 24, 0.03);
+  border: 1px solid rgba(24, 24, 24, 0.06);
+}
+
+.status-step span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(24, 24, 24, 0.06);
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 800;
+  flex: 0 0 auto;
+}
+
+.status-step strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.status-step p {
+  margin: 0;
+}
+
+.status-step.is-active {
+  background: rgba(31, 140, 77, 0.08);
+  border-color: rgba(31, 140, 77, 0.16);
+}
+
+.status-step.is-active span {
+  background: rgba(31, 140, 77, 0.14);
+  color: var(--green);
+}
+
 .summary-item-badge {
   flex: 0 0 auto;
   display: inline-flex;
@@ -1026,6 +1210,12 @@ small {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .status-highlight-grid,
+  .pix-helper-grid,
+  .pix-helper-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .checkout-layout {
     grid-template-columns: minmax(0, 1.12fr) minmax(390px, 0.88fr);
   }
@@ -1052,7 +1242,8 @@ small {
   .section-headline,
   .price-card-top,
   .mini-stack-item,
-  .pix-result-head {
+  .pix-result-head,
+  .pix-helper-top {
     flex-direction: column;
   }
 
@@ -1076,7 +1267,8 @@ small {
   }
 
   .payment-method-switch,
-  .pix-result-actions {
+  .pix-result-actions,
+  .pix-helper-actions {
     grid-template-columns: 1fr;
   }
 

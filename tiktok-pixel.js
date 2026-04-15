@@ -270,6 +270,19 @@
     ];
   }
 
+  function createEventId(name, params) {
+    const reference = params?.reference || params?.root_reference || params?.current_reference || "";
+    const base = [name, getPageType(), getOfferKind(), reference, Date.now(), Math.random()]
+      .filter(Boolean)
+      .join(":");
+
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+      return `${name}-${window.crypto.randomUUID()}`;
+    }
+
+    return `${name}-${btoa(base).replace(/[^A-Za-z0-9]/g, "").slice(0, 24)}`;
+  }
+
   function buildEventPayload(name, params) {
     const input = params || {};
     const offerKind = input.offer || input.offerKind || getOfferKind();
@@ -299,6 +312,9 @@
           ? input.value
           : Number(input.value || offer.value),
       currency: input.currency || CURRENCY,
+      event_id: input.event_id || createEventId(name, input),
+      event_time: input.event_time || Math.floor(Date.now() / 1000),
+      url: input.url || window.location.href,
       content_id: offer.content_id,
       content_name: offer.content_name,
       content_type: offer.content_type,

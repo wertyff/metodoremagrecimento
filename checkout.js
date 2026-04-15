@@ -252,7 +252,19 @@ async function handlePixSubmit() {
       currentReference: payload.reference,
       accessToken: payload.accessToken,
       customer,
-      paymentMethod: "pix"
+      paymentMethod: "pix",
+      paymentStatus: payload.paymentStatus,
+      paymentReference: payload.reference,
+      nextUrl: payload.nextUrl,
+      lastPix:
+        payload.pix && payload.pix.qrCode
+          ? {
+              qrCode: payload.pix.qrCode,
+              qrCodeBase64: payload.pix.qrCodeBase64 || "",
+              ticketUrl: payload.pix.ticketUrl || "",
+              reference: payload.rootReference || payload.reference
+            }
+          : null
     });
     await identifyCheckoutCustomer(customer, payload.rootReference || payload.reference);
 
@@ -305,6 +317,7 @@ function setLoading(loading) {
 
 function applyMasks() {
   const cpf = qs("#cpf");
+  const phone = qs("#phone");
 
   const formatCpf = (value) => {
     const digits = value.replace(/\D/g, "").slice(0, 11);
@@ -314,8 +327,26 @@ function applyMasks() {
       .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
   };
 
+  const formatPhone = (value) => {
+    const digits = value.replace(/\D/g, "").slice(0, 11);
+
+    if (digits.length <= 10) {
+      return digits
+        .replace(/(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{4})(\d)/, "$1-$2");
+    }
+
+    return digits
+      .replace(/(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{5})(\d)/, "$1-$2");
+  };
+
   cpf?.addEventListener("input", () => {
     cpf.value = formatCpf(cpf.value);
+  });
+
+  phone?.addEventListener("input", () => {
+    phone.value = formatPhone(phone.value);
   });
 }
 
@@ -372,6 +403,7 @@ function prefillFields() {
     name: customer.name || "",
     email: customer.email || "",
     cpf: customer.cpf || "",
+    phone: customer.phone || "",
     "cardholder-name": customer.name || ""
   };
 
@@ -412,6 +444,7 @@ function collectCustomer() {
   return {
     name: qs("#name")?.value.trim() || "",
     email: qs("#email")?.value.trim() || "",
+    phone: qs("#phone")?.value.trim() || "",
     cpf: qs("#cpf")?.value.trim() || ""
   };
 }
@@ -424,6 +457,7 @@ async function identifyCheckoutCustomer(customer, reference) {
   try {
     await window.tiktokIdentify({
       email: customer.email,
+      phone_number: customer.phone,
       external_id: reference
     });
   } catch {
@@ -432,8 +466,8 @@ async function identifyCheckoutCustomer(customer, reference) {
 }
 
 function validateBeforeSubmit(customer) {
-  if (!customer.name || !customer.email || !customer.cpf) {
-    return "Preencha nome, e-mail e CPF para continuar.";
+  if (!customer.name || !customer.email) {
+    return "Preencha nome e e-mail para continuar.";
   }
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
@@ -441,6 +475,10 @@ function validateBeforeSubmit(customer) {
   }
 
   if (state.paymentMethod === "card") {
+    if (!customer.cpf) {
+      return "Informe o CPF do titular do cartao.";
+    }
+
     const cardholder = qs("#cardholder-name")?.value.trim() || "";
     if (!cardholder) {
       return "Informe o nome como esta no cartao.";
@@ -470,9 +508,7 @@ function paymentPayloadFromCard(cardFormData) {
 function paymentPayloadFromPix(customer) {
   return {
     method: "pix",
-    paymentMethodId: "pix",
-    identificationType: "CPF",
-    identificationNumber: customer.cpf
+    paymentMethodId: "pix"
   };
 }
 
@@ -762,7 +798,19 @@ function mountMercadoPago() {
             currentReference: payload.reference,
             accessToken: payload.accessToken,
             customer,
-            paymentMethod: state.paymentMethod
+            paymentMethod: state.paymentMethod,
+            paymentStatus: payload.paymentStatus,
+            paymentReference: payload.reference,
+            nextUrl: payload.nextUrl,
+            lastPix:
+              state.paymentMethod === "pix" && payload.pix && payload.pix.qrCode
+                ? {
+                    qrCode: payload.pix.qrCode,
+                    qrCodeBase64: payload.pix.qrCodeBase64 || "",
+                    ticketUrl: payload.pix.ticketUrl || "",
+                    reference: payload.rootReference || payload.reference
+                  }
+                : null
           });
           await identifyCheckoutCustomer(customer, payload.rootReference || payload.reference);
 

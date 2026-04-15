@@ -187,12 +187,14 @@ function renderOrderList(container, orders) {
     `;
 }
 
-function statusCopy(status) {
+function statusCopy(status, paymentMethod) {
   if (status === "paid") {
     return {
       pill: "Pagamento aprovado",
       title: "Seu pagamento foi confirmado.",
-      text: "Agora o acesso ja pode ser liberado automaticamente."
+      text: "Agora o acesso ja pode ser liberado automaticamente.",
+      helperTitle: "Tudo certo com o seu pedido",
+      helperText: "Em instantes voce sera redirecionado automaticamente para a area de acesso."
     };
   }
 
@@ -200,15 +202,110 @@ function statusCopy(status) {
     return {
       pill: "Pagamento nao aprovado",
       title: "Nao conseguimos confirmar o pagamento.",
-      text: "Voce pode voltar ao checkout e tentar novamente com outro cartao."
+      text: "Voce pode voltar ao checkout e tentar novamente com outra forma de pagamento.",
+      helperTitle: "Tente novamente sem perder o pedido",
+      helperText:
+        paymentMethod === "card"
+          ? "Se preferir, refaca a compra com outro cartao ou use Pix para confirmar mais rapido."
+          : "Se o Pix expirou ou foi interrompido, voce pode voltar ao checkout e gerar um novo codigo."
     };
   }
 
   return {
-    pill: "Pagamento em analise",
-    title: "Estamos aguardando a confirmacao do pagamento.",
-    text: "Esta pagina atualiza automaticamente. Se preferir, toque em atualizar status."
+    pill: paymentMethod === "pix" ? "Pix aguardando pagamento" : "Pagamento em analise",
+    title:
+      paymentMethod === "pix"
+        ? "Seu Pix foi gerado. Falta so concluir o pagamento."
+        : "Estamos aguardando a confirmacao do pagamento.",
+    text:
+      paymentMethod === "pix"
+        ? "Assim que o banco confirmar o Pix, o acesso sera liberado automaticamente nesta pagina."
+        : "Esta pagina atualiza automaticamente. Se preferir, toque em atualizar status.",
+    helperTitle:
+      paymentMethod === "pix" ? "Pague o Pix e mantenha esta pagina aberta" : "Aguarde a confirmacao",
+    helperText:
+      paymentMethod === "pix"
+        ? "Use o QR Code ou o copia e cola salvo abaixo. Depois do pagamento, a liberacao costuma acontecer sem precisar falar com suporte."
+        : "Assim que o sistema confirmar o pagamento, o acesso sera liberado aqui automaticamente."
   };
+}
+
+function paymentMethodCopy(method, status) {
+  if (method === "card") {
+    return {
+      label: "Cartao de credito",
+      note:
+        status === "rejected"
+          ? "O banco nao aprovou a tentativa atual. Voce pode tentar novamente com outro cartao."
+          : "A aprovacao pode ser imediata ou levar alguns minutos, dependendo da analise do emissor."
+    };
+  }
+
+  return {
+    label: "Pix",
+    note:
+      status === "paid"
+        ? "Pix confirmado com sucesso. O acesso esta sendo liberado."
+        : "Se voce ainda nao pagou, use o QR Code ou o codigo copia e cola salvo nesta pagina."
+  };
+}
+
+function setStatusSteps(container, status) {
+  if (!container) {
+    return;
+  }
+
+  const steps = Array.from(container.querySelectorAll(".status-step"));
+  steps.forEach((step) => step.classList.remove("is-active"));
+
+  if (status === "paid") {
+    steps.forEach((step) => step.classList.add("is-active"));
+    return;
+  }
+
+  if (status === "rejected") {
+    steps.slice(0, 2).forEach((step) => step.classList.add("is-active"));
+    return;
+  }
+
+  steps.slice(0, 2).forEach((step) => step.classList.add("is-active"));
+}
+
+function togglePendingPixBox(elements, session, status, paymentMethod) {
+  if (!elements.box) {
+    return;
+  }
+
+  const lastPix = session.lastPix || {};
+  const shouldShow =
+    paymentMethod === "pix" &&
+    status !== "paid" &&
+    status !== "rejected" &&
+    Boolean(lastPix.qrCode);
+
+  elements.box.classList.toggle("hidden", !shouldShow);
+
+  if (!shouldShow) {
+    return;
+  }
+
+  if (elements.qr) {
+    if (lastPix.qrCodeBase64) {
+      elements.qr.src = `data:image/png;base64,${lastPix.qrCodeBase64}`;
+    } else {
+      elements.qr.removeAttribute("src");
+    }
+  }
+
+  if (elements.code) {
+    elements.code.value = lastPix.qrCode || "";
+  }
+
+  if (elements.ticket) {
+    const hasTicket = Boolean(lastPix.ticketUrl);
+    elements.ticket.classList.toggle("hidden", !hasTicket);
+    elements.ticket.href = hasTicket ? lastPix.ticketUrl : "#";
+  }
 }
 
 async function setupThankYou() {
@@ -228,7 +325,23 @@ async function setupThankYou() {
   const orderReference = document.querySelector("[data-order-reference]");
   const accessButton = document.querySelector("[data-access-button]");
   const refreshButton = document.querySelector("[data-refresh-order]");
+  const copyReferenceButton = document.querySelector("[data-copy-reference]");
+  const autoRefreshTimer = document.querySelector("[data-auto-refresh-timer]");
+  const paymentMethodLabel = document.querySelector("[data-payment-method-label]");
+  const paymentMethodNote = document.querySelector("[data-payment-method-note]");
+  const helperTitle = document.querySelector("[data-helper-title]");
+  const helperText = document.querySelector("[data-helper-text]");
+  const statusSteps = document.querySelector("[data-status-steps]");
+  const pixElements = {
+    box: document.querySelector("[data-thankyou-pix-box]"),
+    qr: document.querySelector("[data-thankyou-pix-qr]"),
+    code: document.querySelector("[data-thankyou-pix-code]"),
+    copy: document.querySelector("[data-copy-thankyou-pix]"),
+    ticket: document.querySelector("[data-thankyou-pix-ticket]")
+  };
   let accessRedirectScheduled = false;
+  let refreshTimeout = null;
+  let countdownTimeout = null;
 
   if (!reference) {
     if (statusTitle) statusTitle.textContent = "Pedido nao encontrado.";
@@ -238,17 +351,105 @@ async function setupThankYou() {
     return;
   }
 
+  const scheduleCountdown = (seconds) => {
+    window.clearTimeout(countdownTimeout);
+
+    if (!autoRefreshTimer) {
+      return;
+    }
+
+    const tick = (remaining) => {
+      autoRefreshTimer.textContent =
+        remaining > 0 ? `Nova consulta em ${remaining}s` : "Atualizando status...";
+
+      if (remaining > 0) {
+        countdownTimeout = window.setTimeout(() => tick(remaining - 1), 1000);
+      }
+    };
+
+    tick(seconds);
+  };
+
+  const scheduleRefresh = (delayMs) => {
+    window.clearTimeout(refreshTimeout);
+    scheduleCountdown(Math.ceil(delayMs / 1000));
+    refreshTimeout = window.setTimeout(refresh, delayMs);
+  };
+
+  copyReferenceButton?.addEventListener("click", async () => {
+    const currentReference = orderReference?.textContent || reference;
+    if (!currentReference) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(currentReference);
+      copyReferenceButton.textContent = "COPIADO";
+      window.setTimeout(() => {
+        copyReferenceButton.textContent = "COPIAR";
+      }, 1800);
+    } catch {
+      copyReferenceButton.textContent = "COPIE MANUALMENTE";
+      window.setTimeout(() => {
+        copyReferenceButton.textContent = "COPIAR";
+      }, 2200);
+    }
+  });
+
+  pixElements.copy?.addEventListener("click", async () => {
+    const code = pixElements.code?.value || "";
+    if (!code) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(code);
+      pixElements.copy.textContent = "PIX COPIADO";
+      if (typeof window.trackEvent === "function") {
+        window.trackEvent("CopyPixCode", {
+          offer: "main",
+          reference,
+          label: "thankyou-copy-pix"
+        });
+      }
+      window.setTimeout(() => {
+        pixElements.copy.textContent = "COPIAR PIX";
+      }, 1800);
+    } catch {
+      pixElements.copy.textContent = "COPIE MANUALMENTE";
+      window.setTimeout(() => {
+        pixElements.copy.textContent = "COPIAR PIX";
+      }, 2200);
+    }
+  });
+
   const render = async () => {
     const data = await fetchOrder(reference);
-    const copy = statusCopy(data.root.status);
+    const paymentMethod = data.root.selectedPaymentMethod || session.paymentMethod || "pix";
+    const copy = statusCopy(data.root.status, paymentMethod);
+    const methodCopy = paymentMethodCopy(paymentMethod, data.root.status);
 
     if (statusPill) statusPill.textContent = copy.pill;
     if (statusTitle) statusTitle.textContent = copy.title;
     if (statusText) statusText.textContent = copy.text;
     if (orderReference) orderReference.textContent = data.root.reference;
+    if (paymentMethodLabel) paymentMethodLabel.textContent = methodCopy.label;
+    if (paymentMethodNote) paymentMethodNote.textContent = methodCopy.note;
+    if (helperTitle) helperTitle.textContent = copy.helperTitle;
+    if (helperText) helperText.textContent = copy.helperText;
 
     renderOrderList(list, [data.root, ...data.extras].filter(Boolean));
     total.textContent = formatBRL(data.approvedTotal || 0);
+    setStatusSteps(statusSteps, data.root.status);
+
+    saveSession({
+      rootReference: data.root.reference,
+      currentReference: data.root.reference,
+      paymentMethod,
+      paymentStatus: data.root.paymentStatus || data.root.status
+    });
+
+    togglePendingPixBox(pixElements, readSession(), data.root.status, paymentMethod);
 
     if (accessButton) {
       accessButton.classList.toggle("hidden", !data.access.available);
@@ -275,16 +476,15 @@ async function setupThankYou() {
         }
         if (!accessRedirectScheduled) {
           accessRedirectScheduled = true;
+          if (autoRefreshTimer) {
+            autoRefreshTimer.textContent = "Acesso sendo liberado...";
+          }
           window.setTimeout(() => {
             window.location.href = data.access.url;
           }, 2200);
         }
       }
     }
-
-    saveSession({
-      rootReference: data.root.reference
-    });
 
     return data;
   };
@@ -293,14 +493,25 @@ async function setupThankYou() {
     try {
       const data = await render();
       if (data.root.status !== "paid" && data.root.status !== "rejected") {
-        window.setTimeout(refresh, 5000);
+        scheduleRefresh(5000);
+      } else if (autoRefreshTimer) {
+        autoRefreshTimer.textContent =
+          data.root.status === "paid"
+            ? "Pagamento confirmado"
+            : "Pagamento nao aprovado";
       }
     } catch (_error) {
-      window.setTimeout(refresh, 7000);
+      if (autoRefreshTimer) {
+        autoRefreshTimer.textContent = "Tentando novamente...";
+      }
+      scheduleRefresh(7000);
     }
   };
 
   refreshButton?.addEventListener("click", () => {
+    window.clearTimeout(refreshTimeout);
+    window.clearTimeout(countdownTimeout);
+
     if (typeof window.trackEvent === "function") {
       window.trackEvent("RefreshOrderStatus", {
         offer: "main",

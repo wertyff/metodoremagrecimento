@@ -44,7 +44,90 @@
 
             <div class="status-box" data-status-box>
               <strong>Referencia do pedido</strong>
-              <span data-order-reference>--</span>
+              <div class="status-reference-row">
+                <span data-order-reference>--</span>
+                <button class="copy-inline-btn" data-copy-reference type="button">
+                  COPIAR
+                </button>
+              </div>
+            </div>
+
+            <div class="status-highlight-grid">
+              <article class="status-highlight-card">
+                <span class="section-kicker">Verificacao automatica</span>
+                <strong data-auto-refresh-timer>Nova consulta em 5s</strong>
+                <p>Voce nao precisa atualizar manualmente o tempo todo.</p>
+              </article>
+              <article class="status-highlight-card">
+                <span class="section-kicker">Forma escolhida</span>
+                <strong data-payment-method-label>Carregando...</strong>
+                <p data-payment-method-note>
+                  Vamos exibir as instrucoes mais adequadas para o seu pagamento.
+                </p>
+              </article>
+            </div>
+
+            <div class="summary-box payment-helper-box">
+              <div class="section-kicker">O que fazer agora</div>
+              <div class="payment-helper-copy">
+                <h3 data-helper-title>Aguarde a confirmacao</h3>
+                <p data-helper-text>
+                  Assim que o sistema confirmar o pagamento, o acesso sera liberado aqui
+                  automaticamente.
+                </p>
+              </div>
+
+              <div class="pix-helper hidden" data-thankyou-pix-box>
+                <div class="pix-helper-top">
+                  <div>
+                    <strong>Pix ainda pendente</strong>
+                    <p>Se precisar, finalize por aqui sem voltar ao checkout.</p>
+                  </div>
+                  <span class="pix-helper-badge">Pix salvo</span>
+                </div>
+
+                <div class="pix-helper-grid">
+                  <div class="pix-helper-qr">
+                    <img alt="QR Code Pix" data-thankyou-pix-qr />
+                  </div>
+                  <div class="pix-helper-code">
+                    <label for="thankyou-pix-code">Codigo Pix copia e cola</label>
+                    <textarea id="thankyou-pix-code" data-thankyou-pix-code readonly></textarea>
+                    <div class="pix-helper-actions">
+                      <button class="btn btn-ghost" data-copy-thankyou-pix type="button">
+                        COPIAR PIX
+                      </button>
+                      <a class="btn btn-dark hidden" data-thankyou-pix-ticket href="#" target="_blank" rel="noopener noreferrer">
+                        ABRIR NO BANCO
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="status-steps" data-status-steps>
+                <div class="status-step is-active">
+                  <span>1</span>
+                  <div>
+                    <strong>Pagamento recebido pelo sistema</strong>
+                    <p>O pedido ja foi criado e esta sendo acompanhado em tempo real.</p>
+                  </div>
+                </div>
+                <div class="status-step">
+                  <span>2</span>
+                  <div>
+                    <strong>Confirmacao do banco</strong>
+                    <p>A aprovacao pode levar alguns segundos ou poucos minutos, dependendo do metodo.</p>
+                  </div>
+                </div>
+                <div class="status-step">
+                  <span>3</span>
+                  <div>
+                    <strong>Liberacao imediata do acesso</strong>
+                    <p>Assim que aprovar, voce segue automaticamente para a area do aluno.</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="thankyou-boxes">
@@ -76,6 +159,15 @@
             <div class="order-row total">
               <span>Total aprovado</span>
               <strong data-final-total>R$ 0,00</strong>
+            </div>
+
+            <div class="summary-box summary-help-box">
+              <div class="section-kicker">Importante</div>
+              <h3>Fez o Pix agora?</h3>
+              <p>
+                Depois de pagar, mantenha esta pagina aberta por alguns instantes. O acesso
+                costuma liberar sem precisar falar com suporte.
+              </p>
             </div>
           </aside>
         </div>
