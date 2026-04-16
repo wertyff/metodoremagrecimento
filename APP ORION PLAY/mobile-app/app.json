@@ -16,8 +16,8 @@
       [
         "react-native-google-mobile-ads",
         {
-          "androidAppId": "ca-app-pub-3940256099942544~3347511713",
-          "iosAppId": "ca-app-pub-3940256099942544~1458002511",
+          "androidAppId": "ca-app-pub-8883297572522716~5171952731",
+          "iosAppId": "ca-app-pub-8883297572522716~3053055856",
           "userTrackingUsageDescription": "Usamos esse identificador para exibir anuncios mais relevantes e medir desempenho no app."
         }
       ],
@@ -46,12 +46,12 @@
     "extra": {
       "apiBaseUrl": "https://metodo-seca-rapido-14d.onrender.com",
       "adMob": {
-        "androidHomeBannerUnitId": "",
-        "iosHomeBannerUnitId": "",
-        "androidGamesBannerUnitId": "",
-        "iosGamesBannerUnitId": "",
-        "androidPremiumRewardedUnitId": "",
-        "iosPremiumRewardedUnitId": ""
+        "androidHomeBannerUnitId": "ca-app-pub-8883297572522716/7435167309",
+        "iosHomeBannerUnitId": "ca-app-pub-8883297572522716/5930513943",
+        "androidGamesBannerUnitId": "ca-app-pub-8883297572522716/2182840624",
+        "iosGamesBannerUnitId": "ca-app-pub-8883297572522716/8717505561",
+        "androidPremiumRewardedUnitId": "ca-app-pub-8883297572522716/3304350605",
+        "iosPremiumRewardedUnitId": "ca-app-pub-8883297572522716/5568598047"
       },
       "eas": {
         "projectId": "c08d8632-1b85-4196-90bb-70abf776fb75"
