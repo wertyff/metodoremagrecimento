@@ -1,3 +1,15 @@
 node_modules/
 .env
 data/orders.json
+data/auth.json
+*.zip
+_tmp_lmtdemo/
+_tmp_lmtdemo_1/
+m/
+APP ORION PLAY/mobile-app/.expo/
+APP ORION PLAY/mobile-app/.local-build/
+APP ORION PLAY/mobile-app/node_modules/
+APP ORION PLAY/mobile-app/android/.kotlin/
+APP ORION PLAY/mobile-app/android/app/.cxx/
+APP ORION PLAY/mobile-app-clean/.codex-buildlogs/
+APP ORION PLAY/mobile-app-clean/node_modules/

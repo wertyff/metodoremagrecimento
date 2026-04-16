@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>Orion Play | Entretenimento Premium</title>
+    <meta
+      name="description"
+      content="App mobile premium de entretenimento com filmes, series, canais, futebol e esportes ao vivo em uma experiencia moderna."
+    />
+    <meta name="theme-color" content="#070b16" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Orion Play" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="manifest" href="orion-play.webmanifest" />
+    <link rel="stylesheet" href="orion-play.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="mobile-topbar">
+        <div class="brand-lockup">
+          <span class="brand-mark">O</span>
+          <div>
+            <strong>Orion Play</strong>
+            <span>Entretenimento + Futebol + Canais</span>
+          </div>
+        </div>
+        <button class="icon-button ghost" data-open-notifications type="button" aria-label="Abrir notificacoes">
+          <span class="notification-dot"></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 22a2.7 2.7 0 0 0 2.6-2h-5.2A2.7 2.7 0 0 0 12 22Zm7-4H5v-1.2l1.4-1.3v-4.2A5.8 5.8 0 0 1 10.5 5V4a1.5 1.5 0 1 1 3 0v1a5.8 5.8 0 0 1 4.1 6.3v4.2l1.4 1.3V18Z"/>
+          </svg>
+        </button>
+      </header>
+
+      <main class="app-body">
+        <section class="hero-panel" data-hero></section>
+
+        <section class="search-panel">
+          <label class="search-field">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M10.5 4a6.5 6.5 0 1 0 4.04 11.6l4.43 4.43 1.41-1.41-4.43-4.43A6.5 6.5 0 0 0 10.5 4Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z"/>
+            </svg>
+            <input
+              data-search-input
+              type="search"
+              placeholder="Buscar filmes, series, jogos, canais..."
+              autocomplete="off"
+            />
+          </label>
+          <div class="quick-actions">
+            <button class="chip-button active" data-filter="all" type="button">Tudo</button>
+            <button class="chip-button" data-filter="movies" type="button">Filmes</button>
+            <button class="chip-button" data-filter="series" type="button">Series</button>
+            <button class="chip-button" data-filter="football" type="button">Futebol</button>
+            <button class="chip-button" data-filter="channels" type="button">Canais</button>
+          </div>
+        </section>
+
+        <section class="view-container" data-view-container></section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="Navegacao principal">
+        <button class="bottom-nav-item active" data-view="home" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3 9.5V21h6v-6h6v6h6V9.5L12 3Z"/></svg>
+          <span>Inicio</span>
+        </button>
+        <button class="bottom-nav-item" data-view="discover" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 5 7 3.5v7L12 19l-7-3.5v-7L12 5Zm0 2.2L7 9.8v4.4l5 2.5 5-2.5V9.8l-5-2.6Z"/></svg>
+          <span>Explorar</span>
+        </button>
+        <button class="bottom-nav-item" data-view="live" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7Zm3-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H7Zm4 2.8 4.5 3.2L11 15.2V8.8Z"/></svg>
+          <span>Ao vivo</span>
+        </button>
+        <button class="bottom-nav-item" data-view="library" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10a2 2 0 0 1 2 2v12H7a2 2 0 0 0-2 2V4Zm4 4v2h5V8H9Zm-2 0H5v12a2 2 0 0 1 2-2h10v-2H7V8Z"/></svg>
+          <span>Biblioteca</span>
+        </button>
+        <button class="bottom-nav-item" data-view="profile" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z"/></svg>
+          <span>Perfil</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="sheet-overlay hidden" data-auth-sheet>
+      <section class="auth-sheet">
+        <div class="auth-sheet-copy">
+          <span class="eyebrow">Bem-vinda a Orion Play</span>
+          <h1>Seu app premium de filmes, series, esportes e canais.</h1>
+          <p>
+            Entre para salvar favoritos, continuar assistindo, receber alertas e
+            acompanhar sua experiencia em qualquer tela.
+          </p>
+        </div>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-auth-mode="login" type="button">Entrar</button>
+          <button class="auth-tab" data-auth-mode="register" type="button">Cadastrar</button>
+        </div>
+
+        <form class="auth-form" data-auth-form>
+          <div class="field-stack">
+            <label class="field-label" for="auth-name">Nome</label>
+            <input id="auth-name" name="name" placeholder="Seu nome" />
+          </div>
+          <div class="field-stack">
+            <label class="field-label" for="auth-email">E-mail</label>
+            <input id="auth-email" name="email" type="email" placeholder="voce@exemplo.com" />
+          </div>
+          <div class="field-stack">
+            <label class="field-label" for="auth-password">Senha</label>
+            <input id="auth-password" name="password" type="password" placeholder="Sua senha" />
+          </div>
+          <p class="form-feedback hidden" data-auth-feedback></p>
+          <button class="primary-button" data-auth-submit type="submit">Entrar agora</button>
+          <button class="text-button" data-auth-skip type="button">Explorar em modo visitante</button>
+        </form>
+      </section>
+    </div>
+
+    <div class="sheet-overlay hidden" data-details-sheet>
+      <section class="content-sheet" data-details-content></section>
+    </div>
+
+    <div class="sheet-overlay hidden" data-player-sheet>
+      <section class="player-sheet" data-player-content></section>
+    </div>
+
+    <div class="sheet-overlay hidden" data-notifications-sheet>
+      <section class="notification-sheet">
+        <div class="sheet-head">
+          <div>
+            <span class="eyebrow">Notificacoes</span>
+            <h2>Seu centro de alertas</h2>
+          </div>
+          <button class="icon-button" data-close-notifications type="button" aria-label="Fechar notificacoes">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.4 5 5.6 5.6L17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4 6.4 5Z"/></svg>
+          </button>
+        </div>
+        <div class="notification-list" data-notification-list></div>
+      </section>
+    </div>
+
+    <script src="orion-play.js"></script>
+  </body>
+</html>

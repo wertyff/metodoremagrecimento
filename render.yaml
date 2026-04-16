@@ -28,6 +28,36 @@ services:
         value: ""
       - key: SUPPORT_WHATSAPP
         value: ""
+      - key: APP_NAME
+        value: Match Intelligence
+      - key: MOBILE_RESET_SCHEME
+        value: matchintelligence://reset-password
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: SMTP_SECURE
+        value: false
+      - key: PREMIUM_PLAN_CODE
+        value: match_intelligence_pro
+      - key: PREMIUM_PLAN_TITLE
+        value: Match Intelligence PRO
+      - key: PREMIUM_PLAN_DESCRIPTION
+        value: Analises premium, mercados inteligentes, alertas VIP e comparativos avancados.
+      - key: PREMIUM_PLAN_AMOUNT
+        value: 29.90
+      - key: PREMIUM_PLAN_CURRENCY
+        value: BRL
+      - key: PREMIUM_PLAN_FREQUENCY
+        value: 1
+      - key: PREMIUM_PLAN_FREQUENCY_TYPE
+        value: months
       - key: MERCADO_PAGO_PUBLIC_KEY
         sync: false
       - key: MERCADO_PAGO_ACCESS_TOKEN

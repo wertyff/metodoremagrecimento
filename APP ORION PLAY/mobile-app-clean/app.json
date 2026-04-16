@@ -1,0 +1,62 @@
+{
+  "expo": {
+    "name": "Match Intelligence",
+    "slug": "orion-futebol",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#070B16"
+    },
+    "plugins": [
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-3940256099942544~3347511713",
+          "iosAppId": "ca-app-pub-3940256099942544~1458002511",
+          "userTrackingUsageDescription": "Usamos esse identificador para exibir anuncios mais relevantes e medir desempenho no app."
+        }
+      ],
+      "expo-tracking-transparency"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.matchintelligence.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#070B16"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.matchintelligence.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "scheme": "matchintelligence",
+    "description": "App mobile premium de inteligencia de futebol com jogos ao vivo, analises, estatisticas e match tracker.",
+    "extra": {
+      "apiBaseUrl": "https://metodo-seca-rapido-14d.onrender.com",
+      "adMob": {
+        "androidHomeBannerUnitId": "",
+        "iosHomeBannerUnitId": "",
+        "androidGamesBannerUnitId": "",
+        "iosGamesBannerUnitId": "",
+        "androidPremiumRewardedUnitId": "",
+        "iosPremiumRewardedUnitId": ""
+      },
+      "eas": {
+        "projectId": "c08d8632-1b85-4196-90bb-70abf776fb75"
+      }
+    },
+    "owner": "aiury_dev"
+  }
+}

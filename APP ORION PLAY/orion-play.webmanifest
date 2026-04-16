@@ -1,0 +1,10 @@
+{
+  "name": "Orion Play",
+  "short_name": "Orion",
+  "description": "App mobile premium de entretenimento com filmes, series, futebol e canais em uma experiencia moderna.",
+  "start_url": "./orion-play.html",
+  "display": "standalone",
+  "background_color": "#070b16",
+  "theme_color": "#070b16",
+  "lang": "pt-BR"
+}
