@@ -1,6 +1,29 @@
 const path = require("path");
 
 const BRAZIL_TIME_ZONE = "America/Sao_Paulo";
+const PRIORITY_COMPETITIONS = [
+  "Brazilian Serie A",
+  "Brasileirao Betano",
+  "Serie A Brazil",
+  "Serie A",
+  "Premier League",
+  "La Liga",
+  "Copa Libertadores",
+  "CONMEBOL Libertadores",
+  "Champions League",
+  "UEFA Champions League"
+];
+const COMPETITION_PRIORITY_RULES = [
+  { name: "brazilian serie a", country: "brazil", score: 180 },
+  { name: "brasileirao betano", country: "brazil", score: 180 },
+  { name: "serie a", country: "brazil", score: 180, requireExact: true },
+  { name: "premier league", country: "england", score: 170, requireExact: true },
+  { name: "la liga", country: "spain", score: 166, requireExact: true },
+  { name: "copa libertadores", country: "world", score: 162 },
+  { name: "conmebol libertadores", country: "world", score: 162 },
+  { name: "champions league", country: "world", score: 158 },
+  { name: "uefa champions league", country: "world", score: 158 }
+];
 const HIGHLIGHT_LEAGUES = [
   "Brazilian Serie A",
   "Brasileirao Betano",
@@ -413,13 +436,32 @@ function createSportsPlatform(options = {}) {
     return "Partida";
   }
 
-  function inferVisibilityScoreFromValues(competition, teams, status) {
+  function inferVisibilityScoreFromValues(competition, teams, status, country = "") {
     let score = 0;
+    const competitionKey = normalize(competition);
+    const teamKey = normalize(teams);
+    const countryKey = normalize(country);
+
+    for (const rule of COMPETITION_PRIORITY_RULES) {
+      const expectedCountry = normalize(rule.country || "");
+      const nameMatches = rule.requireExact
+        ? competitionKey === normalize(rule.name)
+        : competitionKey.includes(normalize(rule.name));
+      if (
+        nameMatches &&
+        (!expectedCountry || countryKey.includes(expectedCountry))
+      ) {
+        score += rule.score;
+      }
+    }
 
     if (HIGHLIGHT_LEAGUES.some((item) => normalize(competition).includes(normalize(item)))) score += 45;
     BIG_CLUBS.forEach((club) => {
       if (normalize(teams).includes(normalize(club))) score += 12;
     });
+    if (/(u17|u19|u20|u21|u23|sub-|under |\bres\b|reserve|reserves|ii\b| b\b|women|feminino|femenino)/.test(`${competitionKey} ${teamKey}`)) {
+      score -= 65;
+    }
     if (status === "live") score += 25;
     if (status === "upcoming") score += 8;
     return score;
@@ -461,7 +503,8 @@ function createSportsPlatform(options = {}) {
         visibilityScore: inferVisibilityScoreFromValues(
           competition,
           `${homeTeam} ${awayTeam}`,
-          status
+          status,
+          event?.league?.country || ""
         ),
         country: event?.league?.country || "",
         leagueId: String(event?.league?.id || ""),
@@ -512,7 +555,8 @@ function createSportsPlatform(options = {}) {
         visibilityScore: inferVisibilityScoreFromValues(
           competition,
           `${homeTeam} ${awayTeam}`,
-          status
+          status,
+          event?.league?.country?.name || event?.country?.name || ""
         ),
         country: event?.league?.country?.name || event?.country?.name || "",
         leagueId: String(event?.league_id || event?.league?.id || ""),
@@ -553,7 +597,8 @@ function createSportsPlatform(options = {}) {
       visibilityScore: inferVisibilityScoreFromValues(
         event?.strLeague || "Futebol",
         `${event?.strHomeTeam || ""} ${event?.strAwayTeam || ""}`,
-        status
+        status,
+        event?.strCountry || ""
       ),
       country: event?.strCountry || "",
       leagueId: String(event?.idLeague || ""),
