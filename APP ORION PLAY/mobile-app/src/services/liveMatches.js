@@ -1,12 +1,7 @@
-import {
-  featuredMatchId as fallbackFeaturedMatchId,
-  matches as fallbackMatches,
-  notificationsSeed as fallbackNotifications
-} from "../data/catalog";
-
 const API_BASE = "https://www.thesportsdb.com/api/v1/json/123";
 const WINDOW_OFFSETS = [-1, 0, 1];
 const teamBadgeCache = new Map();
+const BRAZIL_TIME_ZONE = "America/Sao_Paulo";
 
 export const MATCH_CATEGORY_ORDER = ["professional", "u20", "u17", "womens", "national"];
 export const MATCH_CATEGORY_LABELS = {
@@ -117,8 +112,60 @@ function offsetDate(baseDate, offset) {
   return formatDateKey(nextDate);
 }
 
-function kickoffLabel(rawTime) {
-  return String(rawTime || "00:00:00").slice(0, 5);
+function formatDatePartsInTimeZone(date, timeZone) {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  });
+
+  const parts = formatter.formatToParts(date).reduce((acc, item) => {
+    if (item.type !== "literal") {
+      acc[item.type] = item.value;
+    }
+    return acc;
+  }, {});
+
+  return {
+    date: `${parts.year}-${parts.month}-${parts.day}`,
+    time: `${parts.hour}:${parts.minute}`
+  };
+}
+
+function parseEventKickoff(dateValue, timeValue, timestampValue) {
+  if (timestampValue) {
+    const normalizedTimestamp = String(timestampValue).trim().replace(" ", "T");
+    const hasZone = /(?:Z|[+-]\d{2}:\d{2})$/i.test(normalizedTimestamp);
+    const parsed = new Date(hasZone ? normalizedTimestamp : `${normalizedTimestamp}Z`);
+
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed;
+    }
+  }
+
+  if (!dateValue) {
+    return null;
+  }
+
+  const safeTime = String(timeValue || "00:00:00").slice(0, 8) || "00:00:00";
+  const parsed = new Date(`${dateValue}T${safeTime}Z`);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function kickoffLabel(dateValue, timeValue, timestampValue) {
+  const kickoffDate = parseEventKickoff(dateValue, timeValue, timestampValue);
+  if (!kickoffDate) {
+    return {
+      date: dateValue || "",
+      time: String(timeValue || "00:00:00").slice(0, 5)
+    };
+  }
+
+  return formatDatePartsInTimeZone(kickoffDate, BRAZIL_TIME_ZONE);
 }
 
 function resolveStatus(rawStatus) {
@@ -210,13 +257,14 @@ function stageLabel(event) {
 function mapEventToMatch(event) {
   const status = resolveStatus(event.strStatus);
   const category = classifyMatchCategory(event.strLeague, event.strHomeTeam, event.strAwayTeam);
+  const kickoff = kickoffLabel(event.dateEvent, event.strTime, event.strTimestamp);
 
   return {
     id: event.idEvent,
     leagueId: event.idLeague || "",
     season: event.strSeason || "",
-    date: event.dateEvent,
-    kickoff: kickoffLabel(event.strTime),
+    date: kickoff.date || event.dateEvent,
+    kickoff: kickoff.time,
     competition: event.strLeague || "Futebol",
     stage: stageLabel(event),
     status,
@@ -256,7 +304,7 @@ function pickFeatured(matches, todayKey) {
     matches.find((item) => item.date === todayKey && item.status === "upcoming")?.id ||
     matches.find((item) => item.date === todayKey)?.id ||
     matches[0]?.id ||
-    fallbackFeaturedMatchId
+    null
   );
 }
 
@@ -296,23 +344,7 @@ function buildNotifications(matches, todayKey) {
     });
   }
 
-  return items.length ? items : fallbackNotifications;
-}
-
-function normalizeFallbackMatch(match) {
-  const category = classifyMatchCategory(match.competition, match.homeTeam, match.awayTeam);
-
-  return {
-    ...match,
-    source: "fallback",
-    sourceLabel: "Base local",
-    homeBadge: match.homeBadge || "",
-    awayBadge: match.awayBadge || "",
-    country: match.country || "Base local",
-    category,
-    categoryLabel: MATCH_CATEGORY_LABELS[category],
-    betradarMatchId: match.betradarMatchId || null
-  };
+  return items;
 }
 
 export function getTodayKey(baseDate = new Date()) {
@@ -321,14 +353,13 @@ export function getTodayKey(baseDate = new Date()) {
 
 export function getFallbackBundle(baseDate = new Date()) {
   const todayKey = getTodayKey(baseDate);
-  const normalizedMatches = fallbackMatches.map(normalizeFallbackMatch).sort(sortMatches);
 
   return {
-    matches: normalizedMatches,
-    featuredMatchId: pickFeatured(normalizedMatches, todayKey),
-    notifications: buildNotifications(normalizedMatches, todayKey),
+    matches: [],
+    featuredMatchId: null,
+    notifications: [],
     todayKey,
-    source: "fallback",
+    source: "empty",
     syncedAt: null
   };
 }

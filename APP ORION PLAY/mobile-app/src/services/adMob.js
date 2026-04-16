@@ -1,87 +1,47 @@
-import { Platform } from "react-native";
-import Constants from "expo-constants";
-import {
-  BannerAdSize,
-  MaxAdContentRating,
-  RewardedAd,
-  TestIds,
-  mobileAds
-} from "react-native-google-mobile-ads";
-import {
-  getTrackingPermissionsAsync,
-  PermissionStatus,
-  requestTrackingPermissionsAsync
-} from "expo-tracking-transparency";
-
-const appExtra =
-  Constants.expoConfig?.extra ||
-  Constants.manifest2?.extra ||
-  {};
-
-const adMobConfig = appExtra.adMob || {};
-let adsInitialized = false;
+import { Text, View } from "react-native";
 
 export const PREMIUM_AD_UNLOCK_MS = 1000 * 60 * 60 * 4;
-export const INLINE_BANNER_SIZE = BannerAdSize.ANCHORED_ADAPTIVE_BANNER;
 
-const bannerUnits = {
-  home: {
-    ios: adMobConfig.iosHomeBannerUnitId || "",
-    android: adMobConfig.androidHomeBannerUnitId || ""
-  },
-  games: {
-    ios: adMobConfig.iosGamesBannerUnitId || "",
-    android: adMobConfig.androidGamesBannerUnitId || ""
-  }
+export const REWARDED_EVENTS = {
+  loaded: "loaded",
+  earnedReward: "earnedReward",
+  closed: "closed",
+  error: "error"
 };
 
-const rewardedUnits = {
-  ios: adMobConfig.iosPremiumRewardedUnitId || "",
-  android: adMobConfig.androidPremiumRewardedUnitId || ""
-};
-
-function platformValue(values, fallback) {
-  return Platform.select({
-    ios: values.ios || fallback,
-    android: values.android || fallback,
-    default: fallback
-  });
-}
-
-export function getBannerUnitId(placement) {
-  return platformValue(
-    bannerUnits[placement] || { ios: "", android: "" },
-    TestIds.ADAPTIVE_BANNER
-  );
+export function initializeAds() {
+  return Promise.resolve(false);
 }
 
 export function createPremiumRewardedAd() {
-  const unitId = platformValue(rewardedUnits, TestIds.REWARDED);
-  return RewardedAd.createForAdRequest(unitId, {
-    requestNonPersonalizedAdsOnly: false
-  });
+  return {
+    addAdEventListener() {
+      return () => {};
+    },
+    load() {},
+    async show() {
+      return false;
+    }
+  };
 }
 
-export async function initializeAds() {
-  if (adsInitialized) {
-    return true;
-  }
-
-  if (Platform.OS === "ios") {
-    const { status } = await getTrackingPermissionsAsync();
-    if (status === PermissionStatus.UNDETERMINED) {
-      await requestTrackingPermissionsAsync();
-    }
-  }
-
-  await mobileAds().setRequestConfiguration({
-    maxAdContentRating: MaxAdContentRating.PG,
-    tagForChildDirectedTreatment: false,
-    tagForUnderAgeOfConsent: false,
-    testDeviceIdentifiers: __DEV__ ? ["EMULATOR"] : []
-  });
-
-  await mobileAds().initialize();
-  adsInitialized = true;
-  return true;
+export function InlineBannerAd() {
+  return (
+    <View
+      style={{
+        minHeight: 74,
+        borderRadius: 16,
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 16,
+        backgroundColor: "rgba(255,255,255,0.04)",
+        borderWidth: 1,
+        borderColor: "rgba(148,163,184,0.16)"
+      }}
+    >
+      <Text style={{ color: "#94A3B8", fontSize: 13, fontWeight: "700" }}>
+        Anuncios aparecem apenas no app Android.
+      </Text>
+    </View>
+  );
 }

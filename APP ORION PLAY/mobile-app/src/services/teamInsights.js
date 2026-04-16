@@ -7,6 +7,7 @@ const statsCache = new Map();
 const timelineCache = new Map();
 const seasonEventsCache = new Map();
 const previousTeamCache = new Map();
+const upcomingTeamCache = new Map();
 
 function normalize(value) {
   return String(value || "")
@@ -211,6 +212,39 @@ async function fetchPreviousTeamEvents(teamId) {
   return promise;
 }
 
+async function fetchUpcomingTeamEvents(teamId) {
+  if (!teamId) {
+    return [];
+  }
+
+  if (upcomingTeamCache.has(teamId)) {
+    return upcomingTeamCache.get(teamId);
+  }
+
+  const promise = fetch(`${API_BASE}/eventsnext.php?id=${teamId}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Falha ao carregar os proximos jogos do time.");
+      }
+
+      return response.json();
+    })
+    .then((payload) => payload.events || [])
+    .catch(() => []);
+
+  upcomingTeamCache.set(teamId, promise);
+  return promise;
+}
+
+function buildUniqueEvents(calendarEvents, seasonEvents, previousEvents) {
+  return [...seasonEvents, ...calendarEvents, ...previousEvents].reduce((acc, event) => {
+    if (event?.idEvent && !acc.some((item) => String(item.idEvent) === String(event.idEvent))) {
+      acc.push(event);
+    }
+    return acc;
+  }, []);
+}
+
 async function fetchEventStatsCached(eventId) {
   if (statsCache.has(eventId)) {
     return statsCache.get(eventId);
@@ -294,6 +328,25 @@ function mapRecentMatch(event, teamSide, teamName) {
     scored: teamScore,
     conceded: opponentScore,
     status: resolveStatus(event.strStatus),
+    raw: event,
+    teamName
+  };
+}
+
+function mapScheduledMatch(event, teamSide, teamName) {
+  const teamIsHome = teamSide === "home";
+
+  return {
+    id: event.idEvent,
+    date: event.dateEvent,
+    dateLabel: DATE_FORMATTER.format(new Date(`${event.dateEvent}T12:00:00`)),
+    kickoff: kickoffLabel(event.strTime),
+    competition: event.strLeague || "Futebol",
+    venue: teamIsHome ? "Casa" : "Fora",
+    opponent: teamIsHome ? event.strAwayTeam : event.strHomeTeam,
+    opponentBadge: teamIsHome ? event.strAwayTeamBadge || "" : event.strHomeTeamBadge || "",
+    status: resolveStatus(event.strStatus),
+    stage: event.strRound || event.strEventAlternate || "",
     raw: event,
     teamName
   };
@@ -781,12 +834,7 @@ export async function fetchTeamAnalysis({
     fetchPreviousTeamEvents(teamId)
   ]);
 
-  const allEvents = [...seasonEvents, ...calendarEvents, ...previousEvents].reduce((acc, event) => {
-    if (event?.idEvent && !acc.some((item) => String(item.idEvent) === String(event.idEvent))) {
-      acc.push(event);
-    }
-    return acc;
-  }, []);
+  const allEvents = buildUniqueEvents(calendarEvents, seasonEvents, previousEvents);
 
   const recentMatches = allEvents
     .filter((event) => {
@@ -1053,6 +1101,155 @@ export async function fetchTeamAnalysis({
       formLine: calcForm(sampleMatches.map((item) => item.result))
     }
   };
+}
+
+export async function fetchTeamRecentMatches({
+  teamId,
+  teamName,
+  leagueId = "",
+  season = "",
+  referenceDate,
+  excludeEventId = "",
+  sampleSize = 10
+}) {
+  if (!teamName) {
+    throw new Error("Time nao informado.");
+  }
+
+  const [calendarEvents, seasonEvents, previousEvents] = await Promise.all([
+    fetchRecentWindow(referenceDate),
+    fetchSeasonEvents(leagueId, season),
+    fetchPreviousTeamEvents(teamId)
+  ]);
+
+  return buildUniqueEvents(calendarEvents, seasonEvents, previousEvents)
+    .filter((event) => {
+      const side = matchTeamSide(event, teamId, teamName);
+      return side && resolveStatus(event.strStatus) === "finished" && String(event.idEvent) !== String(excludeEventId);
+    })
+    .sort((left, right) => eventDateValue(right) - eventDateValue(left))
+    .map((event) => {
+      const side = matchTeamSide(event, teamId, teamName);
+      return mapRecentMatch(event, side, teamName);
+    })
+    .slice(0, sampleSize);
+}
+
+export async function fetchTeamUpcomingMatches({
+  teamId,
+  teamName,
+  sampleSize = 10
+}) {
+  if (!teamId || !teamName) {
+    throw new Error("Time nao informado.");
+  }
+
+  const upcomingEvents = await fetchUpcomingTeamEvents(teamId);
+
+  return upcomingEvents
+    .filter((event) => {
+      const side = matchTeamSide(event, teamId, teamName);
+      return side && resolveStatus(event.strStatus) === "upcoming";
+    })
+    .sort((left, right) => eventDateValue(left) - eventDateValue(right))
+    .map((event) => {
+      const side = matchTeamSide(event, teamId, teamName);
+      return mapScheduledMatch(event, side, teamName);
+    })
+    .slice(0, sampleSize);
+}
+
+export async function fetchCompetitionStandings({
+  leagueId,
+  season = "",
+  referenceDate,
+  focusTeamIds = [],
+  focusTeamNames = []
+}) {
+  const [seasonEvents, calendarEvents] = await Promise.all([
+    fetchSeasonEvents(leagueId, season),
+    fetchRecentWindow(referenceDate, 35)
+  ]);
+
+  const sourceEvents = seasonEvents.length ? seasonEvents : calendarEvents.filter((event) => String(event.idLeague || "") === String(leagueId || ""));
+  const standingsMap = new Map();
+  const focusNamesNormalized = focusTeamNames.map((item) => normalize(item));
+
+  const ensureTeam = (id, name, badgeUrl) => {
+    const key = String(id || name || "").trim();
+    if (!key) return null;
+
+    if (!standingsMap.has(key)) {
+      standingsMap.set(key, {
+        key,
+        teamId: id || "",
+        teamName: name || "Time",
+        badge: badgeUrl || "",
+        played: 0,
+        wins: 0,
+        draws: 0,
+        losses: 0,
+        goalsFor: 0,
+        goalsAgainst: 0,
+        points: 0
+      });
+    }
+
+    const team = standingsMap.get(key);
+    team.badge ||= badgeUrl || "";
+    team.teamId ||= id || "";
+    return team;
+  };
+
+  sourceEvents
+    .filter((event) => resolveStatus(event.strStatus) === "finished")
+    .forEach((event) => {
+      const homeScore = toNumber(event.intHomeScore);
+      const awayScore = toNumber(event.intAwayScore);
+      if (homeScore === null || awayScore === null) return;
+
+      const home = ensureTeam(event.idHomeTeam || "", event.strHomeTeam || "", event.strHomeTeamBadge || "");
+      const away = ensureTeam(event.idAwayTeam || "", event.strAwayTeam || "", event.strAwayTeamBadge || "");
+      if (!home || !away) return;
+
+      home.played += 1;
+      away.played += 1;
+      home.goalsFor += homeScore;
+      home.goalsAgainst += awayScore;
+      away.goalsFor += awayScore;
+      away.goalsAgainst += homeScore;
+
+      if (homeScore > awayScore) {
+        home.wins += 1;
+        away.losses += 1;
+        home.points += 3;
+      } else if (homeScore < awayScore) {
+        away.wins += 1;
+        home.losses += 1;
+        away.points += 3;
+      } else {
+        home.draws += 1;
+        away.draws += 1;
+        home.points += 1;
+        away.points += 1;
+      }
+    });
+
+  return Array.from(standingsMap.values())
+    .map((team) => ({
+      ...team,
+      goalDifference: team.goalsFor - team.goalsAgainst,
+      highlight:
+        focusTeamIds.some((id) => id && String(id) === String(team.teamId)) ||
+        focusNamesNormalized.includes(normalize(team.teamName))
+    }))
+    .sort((a, b) =>
+      b.points - a.points ||
+      b.goalDifference - a.goalDifference ||
+      b.goalsFor - a.goalsFor ||
+      a.teamName.localeCompare(b.teamName)
+    )
+    .map((team, index) => ({ ...team, rank: index + 1 }));
 }
 
 export function describeAnalysisWindow(bundle, requestedSampleSize) {

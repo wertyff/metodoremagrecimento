@@ -12,17 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#070B16"
     },
-    "plugins": [
-      [
-        "react-native-google-mobile-ads",
-        {
-          "androidAppId": "ca-app-pub-8883297572522716~5171952731",
-          "iosAppId": "ca-app-pub-8883297572522716~3053055856",
-          "userTrackingUsageDescription": "Usamos esse identificador para exibir anuncios mais relevantes e medir desempenho no app."
-        }
-      ],
-      "expo-tracking-transparency"
-    ],
+    "plugins": ["expo-tracking-transparency"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.matchintelligence.app",

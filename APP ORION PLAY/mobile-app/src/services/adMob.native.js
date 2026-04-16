@@ -40,7 +40,7 @@ export function InlineBannerAd() {
       }}
     >
       <Text style={{ color: "#94A3B8", fontSize: 13, fontWeight: "700" }}>
-        Anuncios aparecem apenas no app Android.
+        Espaco de anuncio reservado para a versao premium do app.
       </Text>
     </View>
   );
