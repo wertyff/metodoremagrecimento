@@ -13,3 +13,5 @@ APP ORION PLAY/mobile-app/android/.kotlin/
 APP ORION PLAY/mobile-app/android/app/.cxx/
 APP ORION PLAY/mobile-app-clean/.codex-buildlogs/
 APP ORION PLAY/mobile-app-clean/node_modules/
+.tmp-platform-server.log
+.tmp-platform-server.err.log

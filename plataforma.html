@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Match Intelligence | Plataforma de Estatísticas</title>
+    <meta
+      name="description"
+      content="Plataforma de futebol com jogos ao vivo, classificações, H2H, calendários, traits por competição e área premium."
+    />
+    <meta name="theme-color" content="#07131f" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Sora:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="platform.css" />
+  </head>
+  <body>
+    <div class="platform-shell">
+      <header class="platform-topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">MI</div>
+          <div>
+            <p class="eyebrow">Plataforma esportiva</p>
+            <h1>Match Intelligence</h1>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="ghost-btn" id="refreshBtn" type="button">Atualizar</button>
+          <button class="primary-btn" id="authBtn" type="button">Entrar</button>
+        </div>
+      </header>
+
+      <section class="platform-strip">
+        <div class="strip-tabs">
+          <span class="strip-chip active">Radar</span>
+          <span class="strip-chip">Ao vivo</span>
+          <span class="strip-chip">Resultados</span>
+          <span class="strip-chip">Classificações</span>
+          <span class="strip-chip">H2H</span>
+          <span class="strip-chip premium">Premium</span>
+        </div>
+        <div class="strip-note">
+          <strong>Free + Premium</strong>
+          <span>Layer gratuita com dados reais e blocos exclusivos com travas reais.</span>
+        </div>
+      </section>
+
+      <main class="platform-layout">
+        <aside class="platform-sidebar">
+          <section class="panel hero-panel">
+            <p class="eyebrow">Free + Premium</p>
+            <h2>Dados reais, leitura premium e bloqueio real por conta</h2>
+            <p class="muted">
+              Jogos, times, classificações, H2H, calendário, traits e mercados em uma área única.
+            </p>
+
+            <div class="hero-grid">
+              <div class="hero-kpi">
+                <span>Radar</span>
+                <strong id="kpiHighlights">--</strong>
+              </div>
+              <div class="hero-kpi">
+                <span>Ao vivo</span>
+                <strong id="kpiLive">--</strong>
+              </div>
+              <div class="hero-kpi">
+                <span>Competições</span>
+                <strong id="kpiCompetitions">--</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel auth-panel">
+            <div class="panel-header">
+              <h3>Conta</h3>
+              <span class="status-pill" id="sessionPill">Visitante</span>
+            </div>
+            <div id="sessionCard" class="session-card"></div>
+          </section>
+
+          <section class="panel search-panel">
+            <div class="panel-header">
+              <h3>Busca global</h3>
+              <span class="muted tiny">Times do mundo</span>
+            </div>
+            <label class="search-field">
+              <input id="searchInput" type="search" placeholder="Buscar time, jogo ou campeonato" />
+            </label>
+            <div id="searchResults" class="search-results"></div>
+          </section>
+        </aside>
+
+        <section class="platform-content">
+          <section class="panel section-panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Abertura</p>
+                <h2>Jogos de alta visibilidade</h2>
+              </div>
+              <span class="muted tiny" id="updatedAtText">Atualizando...</span>
+            </div>
+            <div id="highlightsGrid" class="highlights-grid"></div>
+          </section>
+
+          <section class="feed-grid">
+            <section class="panel feed-panel">
+              <div class="panel-header">
+                <h3>Ao vivo</h3>
+                <span class="status-pill danger" id="liveCountPill">0</span>
+              </div>
+              <div id="liveList" class="stack-list"></div>
+            </section>
+
+            <section class="panel feed-panel">
+              <div class="panel-header">
+                <h3>Em breve</h3>
+                <span class="status-pill" id="upcomingCountPill">0</span>
+              </div>
+              <div id="upcomingList" class="stack-list"></div>
+            </section>
+
+            <section class="panel feed-panel">
+              <div class="panel-header">
+                <h3>Encerrados</h3>
+                <span class="status-pill subtle" id="finishedCountPill">0</span>
+              </div>
+              <div id="finishedList" class="stack-list"></div>
+            </section>
+          </section>
+
+          <section class="panel section-panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Mapa mundial</p>
+                <h2>Campeonatos do mundo</h2>
+              </div>
+            </div>
+            <div id="competitionsWrap" class="competition-stack"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="authDialog" class="platform-dialog">
+      <div class="dialog-card">
+        <button class="dialog-close" id="closeAuthDialog" type="button">×</button>
+        <div class="dialog-tabs">
+          <button class="tab-btn active" data-auth-tab="login" type="button">Login</button>
+          <button class="tab-btn" data-auth-tab="register" type="button">Cadastro</button>
+        </div>
+        <form id="loginForm" class="dialog-form">
+          <label><span>E-mail</span><input name="email" type="email" required /></label>
+          <label><span>Senha</span><input name="password" type="password" required /></label>
+          <button class="primary-btn wide" type="submit">Entrar</button>
+        </form>
+        <form id="registerForm" class="dialog-form hidden">
+          <label><span>Nome</span><input name="name" type="text" required /></label>
+          <label><span>E-mail</span><input name="email" type="email" required /></label>
+          <label><span>Senha</span><input name="password" type="password" required /></label>
+          <label><span>Confirmar senha</span><input name="confirmPassword" type="password" required /></label>
+          <button class="primary-btn wide" type="submit">Criar conta</button>
+        </form>
+        <p id="authMessage" class="muted small"></p>
+      </div>
+    </dialog>
+
+    <dialog id="detailDialog" class="platform-dialog detail-dialog">
+      <div class="detail-card">
+        <button class="dialog-close" id="closeDetailDialog" type="button">×</button>
+        <div id="detailContent"></div>
+      </div>
+    </dialog>
+
+    <script src="platform.js" type="module"></script>
+  </body>
+</html>

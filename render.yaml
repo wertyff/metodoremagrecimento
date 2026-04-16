@@ -66,3 +66,15 @@ services:
         sync: false
       - key: MERCADO_PAGO_STATEMENT_DESCRIPTOR
         value: SECARAPIDO
+      - key: SPORTS_PROVIDER
+        value: api-football
+      - key: API_FOOTBALL_KEY
+        sync: false
+      - key: API_FOOTBALL_BASE_URL
+        value: https://v3.football.api-sports.io
+      - key: SPORTSMONKS_TOKEN
+        sync: false
+      - key: SPORTSMONKS_BASE_URL
+        value: https://api.sportmonks.com/v3/football
+      - key: THESPORTSDB_BASE_URL
+        value: https://www.thesportsdb.com/api/v1/json/123

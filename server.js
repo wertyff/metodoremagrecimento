@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const nodemailer = require("nodemailer");
+const { createSportsPlatform } = require("./sports-platform");
 require("dotenv").config();
 
 const app = express();
@@ -1682,6 +1683,12 @@ app.get(/^\/downloads\/.*$/, (req, res) => {
     }
   });
 });
+
+createSportsPlatform({
+  rootDir,
+  getAuthSessionFromRequest,
+  buildPremiumSnapshot
+}).register(app);
 
 app.use(express.static(rootDir));
 

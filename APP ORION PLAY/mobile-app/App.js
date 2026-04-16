@@ -44,6 +44,12 @@ import {
   MATCH_CATEGORY_ORDER
 } from "./src/services/liveMatches";
 import {
+  fetchPlatformHomeBundle,
+  fetchPlatformMatchBundle,
+  fetchPlatformTeamBundle,
+  searchPlatformTeams
+} from "./src/services/platformSports";
+import {
   describeAnalysisWindow,
   fetchCompetitionStandings,
   fetchTeamAnalysis,
@@ -682,7 +688,7 @@ function AppShell() {
     }
 
     try {
-      const liveBundle = await fetchLiveMatchesWindow();
+      const liveBundle = await fetchPlatformHomeBundle().catch(() => fetchLiveMatchesWindow());
       setMatchBundle(liveBundle);
       setSyncError("");
     } catch (error) {
@@ -788,7 +794,7 @@ function AppShell() {
     setTeamSearchError("");
 
     const timeout = setTimeout(() => {
-      searchTeams(search)
+      searchPlatformTeams(search).catch(() => searchTeams(search))
         .then((teamsFound) => {
           if (!active) return;
           setTeamSearchResults(teamsFound);
@@ -2206,6 +2212,9 @@ function PlayerCard({ player, onPress, compact = false }) {
 
 function TeamCenterModal({ team, allMatches, onClose, onOpenMatch }) {
   const [activeTab, setActiveTab] = useState("summary");
+  const [platformTeamBundle, setPlatformTeamBundle] = useState(null);
+  const [platformTeamLoading, setPlatformTeamLoading] = useState(false);
+  const [platformTeamError, setPlatformTeamError] = useState("");
   const [teamRecent, setTeamRecent] = useState([]);
   const [teamRecentLoading, setTeamRecentLoading] = useState(false);
   const [teamRecentError, setTeamRecentError] = useState("");
@@ -2236,15 +2245,97 @@ function TeamCenterModal({ team, allMatches, onClose, onOpenMatch }) {
   const finishedTeamMatches = teamMatches.filter((match) => match.status === "finished");
   const focusMatch = liveTeamMatches[0] || upcomingTeamMatches[0] || finishedTeamMatches[0] || null;
   const teamCategory = team ? classifyTeamSearchCategory(team) : "professional";
+  const platformRecentMatches = platformTeamBundle?.recentMatches || [];
+  const platformUpcomingMatches = platformTeamBundle?.upcomingMatches || [];
+  const fallbackRecentMatches = finishedTeamMatches.map((item) => {
+    const isHome = normalizeClubIdentity(item.homeTeam) === normalizeClubIdentity(team?.name);
+    return {
+      id: item.id,
+      date: item.date,
+      competition: item.competition,
+      opponent: isHome ? item.awayTeam : item.homeTeam,
+      teamScore: isHome ? item.homeScore ?? 0 : item.awayScore ?? 0,
+      opponentScore: isHome ? item.awayScore ?? 0 : item.homeScore ?? 0,
+      result:
+        (isHome ? item.homeScore ?? 0 : item.awayScore ?? 0) > (isHome ? item.awayScore ?? 0 : item.homeScore ?? 0)
+          ? "V"
+          : (isHome ? item.homeScore ?? 0 : item.awayScore ?? 0) < (isHome ? item.awayScore ?? 0 : item.homeScore ?? 0)
+            ? "D"
+            : "E"
+    };
+  });
+  const fallbackUpcomingMatches = upcomingTeamMatches.map((item) => {
+    const isHome = normalizeClubIdentity(item.homeTeam) === normalizeClubIdentity(team?.name);
+    return {
+      id: item.id,
+      dateLabel: dateLabel(item.date),
+      kickoff: item.kickoff,
+      opponent: isHome ? item.awayTeam : item.homeTeam,
+      competition: item.competition,
+      venue: isHome ? "Casa" : "Fora"
+    };
+  });
+  const effectiveRecentMatches = platformRecentMatches.length ? platformRecentMatches : fallbackRecentMatches;
+  const effectiveUpcomingMatches = platformUpcomingMatches.length ? platformUpcomingMatches : fallbackUpcomingMatches;
+  const effectiveStandingsRows = platformTeamBundle?.standings?.length ? platformTeamBundle.standings : standingsRows;
+  const effectiveRoster = platformTeamBundle?.squad?.length ? platformTeamBundle.squad : teamRoster;
 
   useEffect(() => {
     setActiveTab("summary");
+    setPlatformTeamBundle(null);
+    setPlatformTeamError("");
     setTeamRecent([]);
     setTeamRecentError("");
     setStandingsRows([]);
     setStandingsError("");
     setTeamRoster([]);
     setTeamRosterError("");
+  }, [team?.id, team?.name]);
+
+  useEffect(() => {
+    let active = true;
+
+    if (!team?.name) {
+      return () => {
+        active = false;
+      };
+    }
+
+    setPlatformTeamLoading(true);
+    setPlatformTeamError("");
+
+    async function loadPlatformTeam() {
+      let teamId = team.id;
+      if (!teamId) {
+        const found = await searchPlatformTeams(team.name);
+        const exact = found.find((item) => normalize(item.name) === normalize(team.name)) || found[0];
+        teamId = exact?.id;
+      }
+
+      if (!teamId) {
+        throw new Error("team");
+      }
+
+      const payload = await fetchPlatformTeamBundle(teamId);
+      if (!active) return;
+      setPlatformTeamBundle(payload);
+    }
+
+    loadPlatformTeam()
+      .catch(() => {
+        if (!active) return;
+        setPlatformTeamBundle(null);
+        setPlatformTeamError("Ainda nao foi possivel carregar o centro completo desse time na plataforma.");
+      })
+      .finally(() => {
+        if (active) {
+          setPlatformTeamLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
   }, [team?.id, team?.name]);
 
   useEffect(() => {
@@ -2370,6 +2461,22 @@ function TeamCenterModal({ team, allMatches, onClose, onOpenMatch }) {
     </View>
   );
 
+  const renderCalendarRow = (item) => (
+    <View key={`${item.id}-${item.dateLabel}-${item.kickoff}`} style={styles.calendarRow}>
+      <View style={styles.calendarRowMeta}>
+        <Text style={styles.calendarRowDate}>{item.dateLabel}</Text>
+        <Text style={styles.calendarRowTime}>{item.kickoff}</Text>
+      </View>
+      <View style={styles.calendarRowMain}>
+        <Text style={styles.calendarRowOpponent} numberOfLines={1}>{item.opponent}</Text>
+        <Text style={styles.calendarRowCompetition} numberOfLines={1}>{item.competition}</Text>
+      </View>
+      <View style={styles.calendarRowVenuePill}>
+        <Text style={styles.calendarRowVenueText}>{item.venue}</Text>
+      </View>
+    </View>
+  );
+
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.modalBack}>
@@ -2399,7 +2506,9 @@ function TeamCenterModal({ team, allMatches, onClose, onOpenMatch }) {
                 <Text style={styles.teamCenterHeroChipText}>{MATCH_CATEGORY_LABELS[teamCategory] || "Profissional"}</Text>
               </View>
               <View style={styles.teamCenterHeroChipMuted}>
-                <Text style={styles.teamCenterHeroChipMutedText}>{teamMatches.length} jogos encontrados</Text>
+                <Text style={styles.teamCenterHeroChipMutedText}>
+                  {(liveTeamMatches.length + effectiveUpcomingMatches.length + effectiveRecentMatches.length) || teamMatches.length} jogos encontrados
+                </Text>
               </View>
             </View>
 
@@ -2445,7 +2554,15 @@ function TeamCenterModal({ team, allMatches, onClose, onOpenMatch }) {
               <View style={styles.statsSection}>
                 <Text style={styles.statsTitle}>Ultimos resultados</Text>
                 <View style={styles.teamCenterBlock}>
-                  {finishedTeamMatches.length ? finishedTeamMatches.slice(0, 12).map(renderTeamScheduleRow) : <Empty title="Sem resultados carregados" body="A base atual ainda nao trouxe jogos encerrados para esse time." />}
+                  {platformTeamLoading && !effectiveRecentMatches.length ? (
+                    <View style={styles.statsLoading}>
+                      <Text style={styles.alertBody}>Carregando ultimos resultados do time...</Text>
+                    </View>
+                  ) : effectiveRecentMatches.length ? (
+                    effectiveRecentMatches.map(renderRecentRow)
+                  ) : (
+                    <Empty title="Sem resultados carregados" body={platformTeamError || "A base atual ainda nao trouxe jogos encerrados para esse time."} />
+                  )}
                 </View>
               </View>
             )}
@@ -2459,7 +2576,15 @@ function TeamCenterModal({ team, allMatches, onClose, onOpenMatch }) {
                 </View>
                 <View style={styles.teamCenterBlock}>
                   <Text style={styles.teamCenterBlockTitle}>Proximos jogos</Text>
-                  {upcomingTeamMatches.length ? upcomingTeamMatches.slice(0, 12).map(renderTeamScheduleRow) : <Empty title="Sem calendario carregado" body="A base atual ainda nao trouxe novos compromissos desse time." />}
+                  {platformTeamLoading && !effectiveUpcomingMatches.length ? (
+                    <View style={styles.statsLoading}>
+                      <Text style={styles.alertBody}>Carregando calendario do time...</Text>
+                    </View>
+                  ) : effectiveUpcomingMatches.length ? (
+                    effectiveUpcomingMatches.slice(0, 12).map(renderCalendarRow)
+                  ) : (
+                    <Empty title="Sem calendario carregado" body={platformTeamError || "A base atual ainda nao trouxe novos compromissos desse time."} />
+                  )}
                 </View>
               </View>
             )}
@@ -2472,7 +2597,7 @@ function TeamCenterModal({ team, allMatches, onClose, onOpenMatch }) {
                     <View style={styles.statsLoading}>
                       <Text style={styles.alertBody}>Montando tabela real da competicao...</Text>
                     </View>
-                  ) : standingsRows.length ? (
+                  ) : effectiveStandingsRows.length ? (
                     <View style={styles.tableWrap}>
                       <View style={styles.tableHeaderRow}>
                         <Text style={[styles.tableHeaderCell, styles.tableHeaderCellRank]}>#</Text>
@@ -2484,7 +2609,7 @@ function TeamCenterModal({ team, allMatches, onClose, onOpenMatch }) {
                         <Text style={styles.tableHeaderCell}>SG</Text>
                         <Text style={styles.tableHeaderCell}>PTS</Text>
                       </View>
-                      {standingsRows.slice(0, 16).map((row) => (
+                      {effectiveStandingsRows.slice(0, 16).map((row) => (
                         <View key={`${row.teamId || row.teamName}-${row.rank}`} style={[styles.tableRow, row.highlight && styles.tableRowHighlight]}>
                           <Text style={[styles.tableCell, styles.tableCellRank]}>{row.rank}</Text>
                           <View style={[styles.tableCellTeamWrap, styles.tableCellTeam]}>
@@ -2513,7 +2638,7 @@ function TeamCenterModal({ team, allMatches, onClose, onOpenMatch }) {
               <View style={styles.statsSection}>
                 <Text style={styles.statsTitle}>Elenco</Text>
                 <View style={styles.teamCenterBlock}>
-                  <TeamPlayersPanel team={team} roster={teamRoster} lineups={[]} loading={teamRosterLoading} error={teamRosterError} />
+                  <TeamPlayersPanel team={team} roster={effectiveRoster} lineups={[]} loading={teamRosterLoading || platformTeamLoading} error={teamRosterError || platformTeamError} />
                 </View>
               </View>
             )}
@@ -3894,6 +4019,7 @@ function MatchModal({
   const [resultsScope, setResultsScope] = useState("total");
   const [analysisSide, setAnalysisSide] = useState("home");
   const [sampleSize, setSampleSize] = useState(10);
+  const [platformMatchBundle, setPlatformMatchBundle] = useState(null);
   const [stats, setStats] = useState([]);
   const [loadingStats, setLoadingStats] = useState(false);
   const [statsError, setStatsError] = useState("");
@@ -3931,6 +4057,7 @@ function MatchModal({
       setResultsScope("total");
       setAnalysisSide("home");
       setSampleSize(10);
+      setPlatformMatchBundle(null);
       setStats([]);
       setStatsError("");
       setLoadingStats(false);
@@ -3970,6 +4097,7 @@ function MatchModal({
         setResultsScope("total");
         setAnalysisSide("home");
         setSampleSize(10);
+        setPlatformMatchBundle(null);
         setStats([]);
         setStatsError("");
         setTimeline([]);
@@ -4001,24 +4129,52 @@ function MatchModal({
       setLoadingStats(true);
       setLoadingExtras(true);
 
+      let platformLoaded = false;
+      let platformTimeline = [];
+
       try {
-        const items = await fetchMatchStats(match.id);
+        const platform = await fetchPlatformMatchBundle(match.id);
         if (active) {
-          setStats(items);
-          setStatsError(items.length ? "" : "Ainda nao chegaram estatisticas completas para esta partida.");
+          platformLoaded = true;
+          setPlatformMatchBundle(platform);
+          setStats(platform.stats || []);
+          setStatsError(platform.stats?.length ? "" : "Ainda nao chegaram estatisticas completas para esta partida.");
+          platformTimeline = platform.timeline || [];
+          setTimeline(platformTimeline);
+          setTimelineError(platformTimeline.length ? "" : "Sem eventos detalhados para esta partida.");
+          setRecentBundle({ home: platform.homeRecent || [], away: platform.awayRecent || [] });
+          setCalendarBundle({ home: platform.homeUpcoming || [], away: platform.awayUpcoming || [] });
+          setStandingsRows(platform.standings || []);
+          setResultsError(platform.homeRecent?.length || platform.awayRecent?.length ? "" : "Nao foi possivel carregar os ultimos resultados reais dos dois times agora.");
+          setCalendarError(platform.homeUpcoming?.length || platform.awayUpcoming?.length ? "" : "Nao foi possivel carregar o calendario real dos dois times agora.");
+          setStandingsError(platform.standings?.length ? "" : "Classificacao indisponivel para essa competicao neste momento.");
         }
-      } catch (error) {
+      } catch (_error) {
         if (active) {
-          setStatsError("Ainda nao chegaram estatisticas completas para esta partida.");
-        }
-      } finally {
-        if (active) {
-          setLoadingStats(false);
+          setPlatformMatchBundle(null);
         }
       }
 
+      if (!platformLoaded) {
+        try {
+          const items = await fetchMatchStats(match.id);
+          if (active) {
+            setStats(items);
+            setStatsError(items.length ? "" : "Ainda nao chegaram estatisticas completas para esta partida.");
+          }
+        } catch (error) {
+          if (active) {
+            setStatsError("Ainda nao chegaram estatisticas completas para esta partida.");
+          }
+        }
+      }
+
+      if (active) {
+        setLoadingStats(false);
+      }
+
       const results = await Promise.allSettled([
-        fetchMatchTimeline(match.id),
+        platformLoaded ? Promise.resolve(platformTimeline) : fetchMatchTimeline(match.id),
         fetchMatchBroadcasts(match.id),
         fetchMatchLineup(match.id)
       ]);
@@ -4191,7 +4347,7 @@ function MatchModal({
     async function loadRoster() {
       let teamId = selectedTeam.id;
       if (!teamId) {
-        const teamsFound = await searchTeams(selectedTeam.name);
+        const teamsFound = await searchPlatformTeams(selectedTeam.name).catch(() => searchTeams(selectedTeam.name));
         const exactTeam =
           teamsFound.find((item) => normalize(item.name) === normalize(selectedTeam.name)) ||
           teamsFound[0];
@@ -4236,6 +4392,29 @@ function MatchModal({
     setResultsError("");
     setStandingsLoading(true);
     setStandingsError("");
+
+    if (platformMatchBundle) {
+      setRecentBundle({
+        home: platformMatchBundle.homeRecent || [],
+        away: platformMatchBundle.awayRecent || []
+      });
+      setStandingsRows(platformMatchBundle.standings || []);
+      setResultsError(
+        platformMatchBundle.homeRecent?.length || platformMatchBundle.awayRecent?.length
+          ? ""
+          : "Nao foi possivel carregar os ultimos resultados reais dos dois times agora."
+      );
+      setStandingsError(
+        platformMatchBundle.standings?.length
+          ? ""
+          : "Classificacao indisponivel para essa competicao neste momento."
+      );
+      setResultsLoading(false);
+      setStandingsLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
     Promise.allSettled([
       fetchTeamRecentMatches({
@@ -4292,7 +4471,7 @@ function MatchModal({
     return () => {
       active = false;
     };
-  }, [detailTab, match?.awayTeam, match?.awayTeamId, match?.date, match?.homeTeam, match?.homeTeamId, match?.id, match?.leagueId, match?.season]);
+  }, [detailTab, match?.awayTeam, match?.awayTeamId, match?.date, match?.homeTeam, match?.homeTeamId, match?.id, match?.leagueId, match?.season, platformMatchBundle]);
 
   useEffect(() => {
     let active = true;
@@ -4305,6 +4484,22 @@ function MatchModal({
 
     setCalendarLoading(true);
     setCalendarError("");
+
+    if (platformMatchBundle) {
+      setCalendarBundle({
+        home: platformMatchBundle.homeUpcoming || [],
+        away: platformMatchBundle.awayUpcoming || []
+      });
+      setCalendarError(
+        platformMatchBundle.homeUpcoming?.length || platformMatchBundle.awayUpcoming?.length
+          ? ""
+          : "Nao foi possivel carregar o calendario real dos dois times agora."
+      );
+      setCalendarLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
     Promise.allSettled([
       fetchTeamUpcomingMatches({
@@ -4337,7 +4532,7 @@ function MatchModal({
     return () => {
       active = false;
     };
-  }, [detailTab, match?.awayTeam, match?.awayTeamId, match?.homeTeam, match?.homeTeamId, match?.id]);
+  }, [detailTab, match?.awayTeam, match?.awayTeamId, match?.homeTeam, match?.homeTeamId, match?.id, platformMatchBundle]);
 
   if (!match) return null;
 
@@ -4363,6 +4558,22 @@ function MatchModal({
     );
   };
 
+  const renderH2HRow = (item) => (
+    <View key={`h2h-${item.id}-${item.date}`} style={styles.recentRow}>
+      <View style={styles.recentDateWrap}>
+        <Text style={styles.recentDate}>{item.dateLabel || item.date}</Text>
+        <Text style={styles.recentDateMeta}>{item.competition}</Text>
+      </View>
+      <View style={styles.recentTeamsWrap}>
+        <Text style={styles.recentOpponent} numberOfLines={1}>{item.homeTeam}</Text>
+        <Text style={styles.recentOpponent} numberOfLines={1}>{item.awayTeam}</Text>
+      </View>
+      <View style={styles.recentScoreWrap}>
+        <Text style={styles.recentScore}>{item.homeScore} x {item.awayScore}</Text>
+      </View>
+    </View>
+  );
+
   const renderCalendarRow = (item, sideLabel) => (
     <View key={`${sideLabel}-${item.id}`} style={styles.calendarRow}>
       <View style={styles.calendarRowMeta}>
@@ -4379,12 +4590,14 @@ function MatchModal({
     </View>
   );
 
-  const h2hRows = recentBundle.home
-    .filter((item) => normalize(item.opponent) === normalize(match.awayTeam))
-    .slice(0, 8);
-  const h2hHomeWins = h2hRows.filter((item) => item.result === "V").length;
-  const h2hDraws = h2hRows.filter((item) => item.result === "E").length;
-  const h2hAwayWins = h2hRows.filter((item) => item.result === "D").length;
+  const h2hRows = platformMatchBundle?.h2h?.matches?.length
+    ? platformMatchBundle.h2h.matches.slice(0, 8)
+    : recentBundle.home
+        .filter((item) => normalize(item.opponent) === normalize(match.awayTeam))
+        .slice(0, 8);
+  const h2hHomeWins = platformMatchBundle?.h2h?.summary?.homeWins ?? h2hRows.filter((item) => item.result === "V").length;
+  const h2hDraws = platformMatchBundle?.h2h?.summary?.draws ?? h2hRows.filter((item) => item.result === "E").length;
+  const h2hAwayWins = platformMatchBundle?.h2h?.summary?.awayWins ?? h2hRows.filter((item) => item.result === "D").length;
 
   return (
     <Modal visible transparent animationType="slide">
@@ -4559,7 +4772,9 @@ function MatchModal({
               ) : h2hRows.length ? (
                 <View style={styles.resultsPanel}>
                   <Text style={styles.resultsPanelTitle}>{match.homeTeam} x {match.awayTeam}</Text>
-                  {h2hRows.map((item) => renderRecentRow(item, "h2h"))}
+                  {platformMatchBundle?.h2h?.matches?.length
+                    ? h2hRows.map((item) => renderH2HRow(item))
+                    : h2hRows.map((item) => renderRecentRow(item, "h2h"))}
                 </View>
               ) : (
                 <View style={styles.statsLoading}>
